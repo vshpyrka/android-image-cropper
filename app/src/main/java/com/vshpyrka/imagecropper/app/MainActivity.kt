@@ -48,8 +48,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+public class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?): Unit {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
@@ -82,7 +82,7 @@ internal fun rememberImageCropperAppState(): ImageCropperAppState {
 }
 
 @Composable
-fun ImageCropperApp() {
+public fun ImageCropperApp(): Unit {
     val state = rememberImageCropperAppState()
     val context = LocalContext.current
 

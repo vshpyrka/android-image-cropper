@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+kotlin {
+    explicitApi()
+}
+
 android {
     namespace = "com.vshpyrka.imagecropper"
     compileSdk = 36

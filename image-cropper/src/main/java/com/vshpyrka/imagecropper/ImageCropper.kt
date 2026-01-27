@@ -166,16 +166,16 @@ public class ImageCropperColors(
  * @param imageBitmap The [ImageBitmap] that will be used for cropping calculations.
  */
 @Stable
-class ImageCropperState(val imageBitmap: ImageBitmap) {
+public class ImageCropperState(public val imageBitmap: ImageBitmap) {
 
     /** The size of the original image being cropped. */
-    var imageSize by mutableStateOf(
+    public var imageSize: Size by mutableStateOf(
         Size(imageBitmap.width.toFloat(), imageBitmap.height.toFloat())
     )
         internal set
 
     /** The current crop rectangle in image coordinates. */
-    var cropRect by mutableStateOf(Rect.Zero)
+    public var cropRect: Rect by mutableStateOf(Rect.Zero)
         internal set
 
     init {
@@ -196,11 +196,11 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     internal val offsetYAnim = Animatable(0f)
 
     /** Whether the initial view (fitting image to screen) has been performed. */
-    var initialized by mutableStateOf(false)
+    public var initialized: Boolean by mutableStateOf(false)
         internal set
 
     /** The size of the parent container in pixels. */
-    var parentSize by mutableStateOf(Size.Zero)
+    public var parentSize: Size by mutableStateOf(Size.Zero)
         internal set
 
     /** The current handle being dragged, or null if no interaction is occurring. */
@@ -213,7 +213,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     private var initialCropRect by mutableStateOf(Rect.Zero)
 
     /** Whether the user is currently interacting with the crop rectangle. */
-    var isInteracting by mutableStateOf(false)
+    public var isInteracting: Boolean by mutableStateOf(false)
         internal set
 
     /**
@@ -238,7 +238,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
      *
      * @return The cropped region as a new [ImageBitmap].
      */
-    fun crop(): ImageBitmap {
+    public fun crop(): ImageBitmap {
         val androidBitmap = imageBitmap.asAndroidBitmap()
         val currentRect = cropRect
         val left = currentRect.left.toInt().coerceIn(0, androidBitmap.width - 1)
@@ -255,7 +255,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
      *
      * @param animate Whether to animate the transition or snap immediately.
      */
-    suspend fun fitImageToScreen(animate: Boolean = false) {
+    public suspend fun fitImageToScreen(animate: Boolean = false) {
         if (parentSize == Size.Zero) return
         val screenWidth = parentSize.width
         val screenHeight = parentSize.height
@@ -298,7 +298,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     /**
      * Resets the crop rectangle and viewport animations to their initial states.
      */
-    suspend fun reset() {
+    public suspend fun reset() {
         if (parentSize == Size.Zero) return
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
@@ -338,7 +338,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
      * Centers the current crop rectangle on the screen, zooming in to make it
      * as large as possible with a small margin.
      */
-    suspend fun centerCropRectOnScreen(marginPx: Float) {
+    public suspend fun centerCropRectOnScreen(marginPx: Float) {
         if (parentSize == Size.Zero) return
         val screenWidth = parentSize.width
         val screenHeight = parentSize.height
@@ -482,7 +482,7 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
  * @return A remembered [ImageCropperState].
  */
 @Composable
-fun rememberImageCropperState(imageBitmap: ImageBitmap): ImageCropperState {
+public fun rememberImageCropperState(imageBitmap: ImageBitmap): ImageCropperState {
     return remember(imageBitmap) { ImageCropperState(imageBitmap) }
 }
 
@@ -497,7 +497,7 @@ fun rememberImageCropperState(imageBitmap: ImageBitmap): ImageCropperState {
  * @param state The [ImageCropperState] to control and observe the cropping process.
  */
 @Composable
-fun ImageCropper(
+public fun ImageCropper(
     imageBitmap: ImageBitmap,
     modifier: Modifier = Modifier,
     state: ImageCropperState = rememberImageCropperState(imageBitmap),

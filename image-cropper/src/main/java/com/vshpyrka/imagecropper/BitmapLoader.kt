@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
  * Utility object for loading and resizing bitmaps efficiently to avoid OOM errors.
  * Uses [BitmapFactory.Options.inSampleSize] to downsample images during decoding.
  */
-object BitmapLoader {
+public object BitmapLoader {
 
     /**
      * Loads a bitmap from the given [Uri] and resizes it to fit within the specified dimensions.
@@ -25,7 +25,7 @@ object BitmapLoader {
      * @param dispatcher The [CoroutineDispatcher] to perform the IO operations on. Defaults to [Dispatchers.IO].
      * @return The loaded [Bitmap], or null if loading failed.
      */
-    suspend fun loadBitmap(
+    public suspend fun loadBitmap(
         context: Context,
         uri: Uri,
         maxWidth: Int,
@@ -88,7 +88,7 @@ object BitmapLoader {
      * @param dispatcher The [CoroutineDispatcher] to perform the IO operations on. Defaults to [Dispatchers.IO].
      * @return The loaded [Bitmap], or null if loading failed.
      */
-    suspend fun loadBitmapFromAssets(
+    public suspend fun loadBitmapFromAssets(
         context: Context,
         fileName: String,
         maxWidth: Int,
