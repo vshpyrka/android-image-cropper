@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -352,32 +353,6 @@ fun ImageCropper(
                     drawHandle(screenCropRect.centerRight, handleHalf)
                 }
 
-                // Helper Nodes
-                val testHandleSize = 48.dp
-                val testHandleHalf = testHandleSize / 2
-
-                /**
-                 * An invisible box positioned over a crop handle to capture touch events
-                 * and provide a target for automated tests.
-                 *
-                 * @param handle The [Handle] this box represents.
-                 * @param position The position of the handle in screen coordinates.
-                 */
-                @Composable
-                fun HandleBox(handle: Handle, position: Offset) {
-                    Box(
-                        modifier = Modifier
-                            .size(testHandleSize)
-                            .offset {
-                                IntOffset(
-                                    (position.x - testHandleHalf.toPx()).roundToInt(),
-                                    (position.y - testHandleHalf.toPx()).roundToInt()
-                                )
-                            }
-                            .testTag("Handle${handle.name}")
-                    )
-                }
-
                 HandleBox(Handle.TopLeft, screenCropRect.topLeft)
                 HandleBox(Handle.TopRight, screenCropRect.topRight)
                 HandleBox(Handle.BottomLeft, screenCropRect.bottomLeft)
@@ -387,24 +362,67 @@ fun ImageCropper(
                 HandleBox(Handle.Left, screenCropRect.centerLeft)
                 HandleBox(Handle.Right, screenCropRect.centerRight)
 
-                // Crop Rect Center for dragging
-                Box(
-                    modifier = Modifier
-                        .size(
-                            width = with(density) { screenCropRect.width.toDp() },
-                            height = with(density) { screenCropRect.height.toDp() }
-                        )
-                        .offset {
-                            IntOffset(
-                                screenCropRect.left.roundToInt(),
-                                screenCropRect.top.roundToInt()
-                            )
-                        }
-                        .testTag("CropRect")
-                )
+                CroppingRect(screenCropRect)
             }
         }
     }
+}
+
+/**
+ * An invisible box positioned over the entire crop rectangle to capture touch events
+ * for dragging and provide a target for automated tests.
+ *
+ * @param screenCropRect The current crop rectangle in screen coordinates.
+ */
+@Composable
+private fun CroppingRect(screenCropRect: Rect) {
+    val density = LocalDensity.current
+    Box(
+        modifier = Modifier
+            .size(
+                width = with(density) { screenCropRect.width.toDp() },
+                height = with(density) { screenCropRect.height.toDp() }
+            )
+            .offset {
+                IntOffset(
+                    screenCropRect.left.roundToInt(),
+                    screenCropRect.top.roundToInt()
+                )
+            }
+            .testTag("CropRect")
+    )
+}
+
+/**
+ * An invisible box positioned over a crop handle to capture touch events
+ * and provide a target for automated tests.
+ *
+ * @param handle The [Handle] this box represents.
+ * @param position The position of the handle in screen coordinates.
+ * @param drawDebug Whether to draw a yellow background for the handle box for debugging.
+ */
+@Composable
+private fun HandleBox(
+    handle: Handle,
+    position: Offset,
+    drawDebug: Boolean = false,
+) {
+    val testHandleSize = 48.dp
+    val testHandleHalf = testHandleSize / 2
+    Box(
+        modifier = Modifier
+            .size(testHandleSize)
+            .offset {
+                IntOffset(
+                    (position.x - testHandleHalf.toPx()).roundToInt(),
+                    (position.y - testHandleHalf.toPx()).roundToInt()
+                )
+            }
+            .then(
+                if (drawDebug) Modifier.background(Color.Yellow) else Modifier
+            )
+            .testTag("Handle${handle.name}")
+    )
 }
 
 /**
@@ -444,8 +462,23 @@ private fun Rect.toScreen(scale: Float, offset: Offset): Rect {
  * Represents the different parts of the crop rectangle that can be interacted with.
  */
 private enum class Handle {
-    TopLeft, TopRight, BottomLeft, BottomRight,
-    Top, Bottom, Left, Right,
+    /** Top-left corner handle. */
+    TopLeft,
+    /** Top-right corner handle. */
+    TopRight,
+    /** Bottom-left corner handle. */
+    BottomLeft,
+    /** Bottom-right corner handle. */
+    BottomRight,
+    /** Top-side handle. */
+    Top,
+    /** Bottom-side handle. */
+    Bottom,
+    /** Left-side handle. */
+    Left,
+    /** Right-side handle. */
+    Right,
+    /** Center handle for dragging the entire rectangle. */
     Center;
 
     /** Returns true if this handle involves the left edge. */
