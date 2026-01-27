@@ -44,6 +44,30 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+/** The default size of the crop rectangle relative to the image size. */
+private const val DEFAULT_CROP_RECT_PERCENTAGE = 0.8f
+/** The duration of the centering and fitting animations in milliseconds. */
+private const val ANIMATION_DURATION_MS = 300
+/** The opacity of the dark overlay surrounding the crop rectangle. */
+private const val OVERLAY_ALPHA = 0.5f
+/** The opacity of the grid lines inside the crop rectangle. */
+private const val GRID_ALPHA = 0.7f
+
+/** The minimum diameter for a touch target to ensure it is easily interactable. */
+private val MIN_TOUCH_TARGET_SIZE = 48.dp
+/** The base minimum dimension for the crop rectangle. */
+private val BASE_MIN_CROP_SIZE = 48.dp
+/** The margin maintained between the crop rectangle and the screen edge when centering. */
+private val CENTER_MARGIN = 20.dp
+/** The visual radius of the corner and side handles. */
+private val HANDLE_RADIUS = 10.dp
+/** The size of the invisible touch-target box for each handle. */
+private val HANDLE_INTERACTION_SIZE = 48.dp
+/** The thickness of the main crop rectangle border. */
+private val BORDER_STROKE_WIDTH = 2.dp
+/** The thickness of the grid lines. */
+private val GRID_STROKE_WIDTH = 1.dp
+
 /**
  * A state object that can be hoisted to control and observe the image cropping state.
  *
@@ -66,8 +90,8 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         // Initialize crop rect to 80% of image size, centered
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * 0.8f
-        val rectHeight = imageHeight * 0.8f
+        val rectWidth = imageWidth * DEFAULT_CROP_RECT_PERCENTAGE
+        val rectHeight = imageHeight * DEFAULT_CROP_RECT_PERCENTAGE
         cropRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -175,9 +199,24 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         val newX = (screenWidth - newW) / 2 - cropRect.left * scale
         val newY = (screenHeight - newH) / 2 - cropRect.top * scale
         coroutineScope {
-            launch { scaleAnim.animateTo(scale, animationSpec = tween(300)) }
-            launch { offsetXAnim.animateTo(newX, animationSpec = tween(300)) }
-            launch { offsetYAnim.animateTo(newY, animationSpec = tween(300)) }
+            launch {
+                scaleAnim.animateTo(
+                    scale,
+                    animationSpec = tween(ANIMATION_DURATION_MS)
+                )
+            }
+            launch {
+                offsetXAnim.animateTo(
+                    newX,
+                    animationSpec = tween(ANIMATION_DURATION_MS)
+                )
+            }
+            launch {
+                offsetYAnim.animateTo(
+                    newY,
+                    animationSpec = tween(ANIMATION_DURATION_MS)
+                )
+            }
         }
     }
 
@@ -310,9 +349,9 @@ fun ImageCropper(
     state: ImageCropperState = rememberImageCropperState(imageBitmap),
 ) {
     val density = LocalDensity.current
-    val minTouchSize = with(density) { 48.dp.toPx() }
-    val baseMinCropSize = with(density) { 48.dp.toPx() } // Using 48dp as a reasonable base minimum
-    val centerMargin = with(density) { 20.dp.toPx() }
+    val minTouchSizePx = with(density) { MIN_TOUCH_TARGET_SIZE.toPx() }
+    val baseMinCropSizePx = with(density) { BASE_MIN_CROP_SIZE.toPx() }
+    val centerMarginPx = with(density) { CENTER_MARGIN.toPx() }
 
     Box(
         modifier = modifier
@@ -338,7 +377,7 @@ fun ImageCropper(
                     .pointerInput(Unit) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
-                            state.onInteractionStart(down.position, minTouchSize)
+                            state.onInteractionStart(down.position, minTouchSizePx)
                             waitForUpOrCancellation()
                             state.onInteractionEnd()
                         }
@@ -346,21 +385,21 @@ fun ImageCropper(
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { pos ->
-                                state.onDragStart(pos, minTouchSize)
+                                state.onDragStart(pos, minTouchSizePx)
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    state.onDragFinished(centerMargin)
+                                    state.onDragFinished(centerMarginPx)
                                 }
                             },
                             onDragCancel = {
                                 scope.launch {
-                                    state.onDragFinished(centerMargin)
+                                    state.onDragFinished(centerMarginPx)
                                 }
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                state.onDrag(change.position, baseMinCropSize)
+                                state.onDrag(change.position, baseMinCropSizePx)
                             }
                         )
                     }
@@ -378,7 +417,7 @@ fun ImageCropper(
                     )
 
                     // Overlay
-                    val overlayColor = Color.Black.copy(alpha = 0.5f)
+                    val overlayColor = Color.Black.copy(alpha = OVERLAY_ALPHA)
                     drawRect(
                         color = overlayColor,
                         topLeft = Offset.Zero,
@@ -405,41 +444,41 @@ fun ImageCropper(
                         color = Color.White,
                         topLeft = screenCropRect.topLeft,
                         size = screenCropRect.size,
-                        style = Stroke(width = 2.dp.toPx())
+                        style = Stroke(width = BORDER_STROKE_WIDTH.toPx())
                     )
 
                     // Grid
                     if (state.showGrid) {
-                        val gridStrokeWidth = 1.dp.toPx()
-                        val gridColor = Color.White.copy(alpha = 0.7f)
+                        val gridStrokeWidthPx = GRID_STROKE_WIDTH.toPx()
+                        val gridColor = Color.White.copy(alpha = GRID_ALPHA)
                         for (i in 1..2) {
                             val gridX = screenCropRect.left + screenCropRect.width * i / 3f
                             drawLine(
                                 color = gridColor,
                                 start = Offset(gridX, screenCropRect.top),
                                 end = Offset(gridX, screenCropRect.bottom),
-                                strokeWidth = gridStrokeWidth
+                                strokeWidth = gridStrokeWidthPx
                             )
                             val gridY = screenCropRect.top + screenCropRect.height * i / 3f
                             drawLine(
                                 color = gridColor,
                                 start = Offset(screenCropRect.left, gridY),
                                 end = Offset(screenCropRect.right, gridY),
-                                strokeWidth = gridStrokeWidth
+                                strokeWidth = gridStrokeWidthPx
                             )
                         }
                     }
 
                     // Handles
-                    val handleHalf = 10.dp.toPx()
-                    drawHandle(screenCropRect.topLeft, handleHalf)
-                    drawHandle(screenCropRect.topRight, handleHalf)
-                    drawHandle(screenCropRect.bottomLeft, handleHalf)
-                    drawHandle(screenCropRect.bottomRight, handleHalf)
-                    drawHandle(screenCropRect.topCenter, handleHalf)
-                    drawHandle(screenCropRect.bottomCenter, handleHalf)
-                    drawHandle(screenCropRect.centerLeft, handleHalf)
-                    drawHandle(screenCropRect.centerRight, handleHalf)
+                    val handleRadiusPx = HANDLE_RADIUS.toPx()
+                    drawHandle(screenCropRect.topLeft, handleRadiusPx)
+                    drawHandle(screenCropRect.topRight, handleRadiusPx)
+                    drawHandle(screenCropRect.bottomLeft, handleRadiusPx)
+                    drawHandle(screenCropRect.bottomRight, handleRadiusPx)
+                    drawHandle(screenCropRect.topCenter, handleRadiusPx)
+                    drawHandle(screenCropRect.bottomCenter, handleRadiusPx)
+                    drawHandle(screenCropRect.centerLeft, handleRadiusPx)
+                    drawHandle(screenCropRect.centerRight, handleRadiusPx)
                 }
 
                 HandleBox(Handle.TopLeft, screenCropRect.topLeft)
@@ -496,15 +535,13 @@ private fun HandleBox(
     position: Offset,
     drawDebug: Boolean = false,
 ) {
-    val testHandleSize = 48.dp
-    val testHandleHalf = testHandleSize / 2
     Box(
         modifier = Modifier
-            .size(testHandleSize)
+            .size(HANDLE_INTERACTION_SIZE)
             .offset {
                 IntOffset(
-                    (position.x - testHandleHalf.toPx()).roundToInt(),
-                    (position.y - testHandleHalf.toPx()).roundToInt()
+                    (position.x - (HANDLE_INTERACTION_SIZE / 2).toPx()).roundToInt(),
+                    (position.y - (HANDLE_INTERACTION_SIZE / 2).toPx()).roundToInt()
                 )
             }
             .then(
