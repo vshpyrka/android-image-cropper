@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -317,6 +318,7 @@ fun ImageCropper(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .clipToBounds()
                     .pointerInput(Unit) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
@@ -349,12 +351,15 @@ fun ImageCropper(
             ) {
                 val screenCropRect = state.cropRect.toScreen(scale, offset)
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    withTransform({
-                        translate(offset.x, offset.y)
-                        scale(scale, scale, pivot = Offset.Zero)
-                    }) {
-                        drawImage(imageBitmap)
-                    }
+                    withTransform(
+                        transformBlock = {
+                            translate(offset.x, offset.y)
+                            scale(scale, scale, pivot = Offset.Zero)
+                        },
+                        drawBlock = {
+                            drawImage(imageBitmap)
+                        }
+                    )
 
                     // Overlay
                     val overlayColor = Color.Black.copy(alpha = 0.5f)
