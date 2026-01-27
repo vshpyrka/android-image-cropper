@@ -1,0 +1,32 @@
+INFO: Constructing runner from config.
+INFO: Configuring Android Instrumentation driver: android_instrumentation_runtime {
+  instrumentation_info {
+    app_package: "com.vshpyrka.imagecropper.test"
+    test_package: "com.vshpyrka.imagecropper.test"
+    test_runner_class: "androidx.test.runner.AndroidJUnitRunner"
+  }
+  instrumentation_args {
+    args_map {
+      key: "additionalTestOutputDir"
+      value: "/sdcard/Android/media/com.vshpyrka.imagecropper.test/additional_test_output"
+    }
+  }
+}
+am_instrument_timeout: 31536000
+
+INFO: Configuring AndroidTestApkInstallerPlugin: apks_to_install {
+  apk_paths: "/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/apk/androidTest/debug/image-cropper-debug-androidTest.apk"
+  install_options {
+  }
+  uninstall_after_test: true
+}
+instrumentation_target_package_id: "com.vshpyrka.imagecropper.test"
+
+INFO: No installables found in test fixture. Nothing to install.
+INFO: Installing [/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/apk/androidTest/debug/image-cropper-debug-androidTest.apk] on device emulator-5554.
+INFO: Start logcat streaming.
+INFO: Running Android Instrumentation driver.
+INFO: Copying files from device to host: /sdcard/Android/media/com.vshpyrka.imagecropper.test/additional_test_output to /Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/Pixel_9_Pro_Fold(AVD) - 16
+INFO: Stop logcat streaming.
+INFO: Uninstalling com.vshpyrka.imagecropper.test for device emulator-5554.
+INFO: Execute com.vshpyrka.imagecropper.ImageCropperTest.imageCropper_rendersAndAcceptsInput: PASSED

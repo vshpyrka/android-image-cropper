@@ -1,0 +1,4 @@
+#Tue Jan 27 15:28:40 EET 2026
+base.0=/Users/vshpyrka/AndroidStudioProjects/ImageCropper/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

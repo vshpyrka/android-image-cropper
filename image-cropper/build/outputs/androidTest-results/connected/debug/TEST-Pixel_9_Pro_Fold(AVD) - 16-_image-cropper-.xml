@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.vshpyrka.imagecropper.ImageCropperTest" tests="1" failures="0" errors="0" skipped="0" time="2.122" timestamp="2026-01-27T13:59:47" hostname="localhost">
+  <properties>
+    <property name="device" value="Pixel_9_Pro_Fold(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":image-cropper" />
+  </properties>
+  <testcase name="imageCropper_rendersAndAcceptsInput" classname="com.vshpyrka.imagecropper.ImageCropperTest" time="1.666" />
+</testsuite>

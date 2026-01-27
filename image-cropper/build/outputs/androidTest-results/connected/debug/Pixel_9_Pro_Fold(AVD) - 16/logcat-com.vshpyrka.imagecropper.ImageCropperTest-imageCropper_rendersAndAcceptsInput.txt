@@ -1,0 +1,123 @@
+01-27 15:59:41.504  1624  1639 I TestRunner: started: imageCropper_rendersAndAcceptsInput(com.vshpyrka.imagecropper.ImageCropperTest)
+01-27 15:59:41.596  1624  1639 I Tracing : Tracer added: class androidx.test.platform.tracing.AndroidXTracer
+01-27 15:59:41.603  1624  1639 D IdlingRegistry: Registering idling resources: [androidx.compose.ui.test.EspressoLink@e923b49]
+01-27 15:59:41.614  1624  1639 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+01-27 15:59:41.620  1624  1639 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+01-27 15:59:41.629   671  1420 I system_server: AssetManager2(0xb400007082dc8ef8) locale list changing from [] to [en-US]
+01-27 15:59:41.630   671  1420 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@20a4a40c does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+01-27 15:59:41.656  1086  1234 I ndroid.systemui: AssetManager2(0xb400007082df4198) locale list changing from [] to [en-US]
+01-27 15:59:41.693   519   551 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:41.739   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:41.741   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:41.741   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:41.744   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:41.807  1624  1624 I agecropper.test: AssetManager2(0xb400007082dbdcd8) locale list changing from [] to [en-US]
+01-27 15:59:41.887  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: PRE_ON_CREATE
+01-27 15:59:41.887  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+01-27 15:59:41.890   476   556 I RanchuHwc: logCompositionFallbackIfChanged: layer 545 CompositionType fallback from 3 to 1
+01-27 15:59:41.917  1624  1641 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+01-27 15:59:41.918  1624  1641 I EGL_emulation: Opening libGLESv2_emulation.so
+01-27 15:59:41.918  1624  1624 D CompatChangeReporter: Compat change id reported: 377864165; UID 10221; state: ENABLED
+01-27 15:59:41.921  1624  1624 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+01-27 15:59:41.926  1624  1641 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+01-27 15:59:41.927  1624  1641 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+01-27 15:59:41.929  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: CREATED
+01-27 15:59:41.930  1624  1624 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=androidx.activity.ComponentActivity@200745f
+01-27 15:59:41.932  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: STARTED
+01-27 15:59:41.932  1624  1624 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=androidx.activity.ComponentActivity@200745f
+01-27 15:59:41.939  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: RESUMED
+01-27 15:59:41.940  1624  1624 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=androidx.activity.ComponentActivity@200745f
+01-27 15:59:41.955  1624  1624 W HWUI    : Unknown dataspace 0
+01-27 15:59:41.984   519   551 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10221 pid=0
+01-27 15:59:41.985   519   551 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10221 => denied (320 us)
+01-27 15:59:41.985   519   551 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10221 pid=0
+01-27 15:59:41.985   519   551 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10221 => denied (37 us)
+01-27 15:59:41.985   519   550 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10221 pid=1624
+01-27 15:59:41.985   519   550 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10221 => denied (169 us)
+01-27 15:59:41.985   519   551 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10221 pid=0
+01-27 15:59:41.985   519   551 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10221 => denied (267 us)
+01-27 15:59:42.020   671  1176 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10221 pid=0
+01-27 15:59:42.022   671  1176 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10221 => denied (2310 us)
+01-27 15:59:42.023   671  1176 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10221 pid=0
+01-27 15:59:42.023   671  1176 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10221 => denied (123 us)
+01-27 15:59:42.023   671  1176 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10221 pid=0
+01-27 15:59:42.023   671  1176 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10221 => denied (45 us)
+01-27 15:59:42.040   671   701 I ActivityTaskManager: Displayed com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity for user 0: +410ms
+01-27 15:59:42.062   671   803 I ImeTracker: com.vshpyrka.imagecropper.test:a48fcc76: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+01-27 15:59:42.071  1624  1624 D InsetsController: hide(ime(), fromIme=false)
+01-27 15:59:42.073  1624  1624 I ImeTracker: com.vshpyrka.imagecropper.test:a48fcc76: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+01-27 15:59:42.081   671  1176 I ImeTracker: system_server:f72abd9c: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+01-27 15:59:42.083   671   704 I ImeTracker: system_server:f72abd9c: onCancelled at PHASE_SERVER_SHOULD_HIDE
+01-27 15:59:42.084  6775  6775 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043
+01-27 15:59:42.095  6775  6775 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+01-27 15:59:42.102  6775  6775 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.vshpyrka.imagecropper.test, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+01-27 15:59:42.106  6775  6775 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+01-27 15:59:42.171  1624  1628 I agecropper.test: Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
+01-27 15:59:42.307   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.307   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.307   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.392  1155  1155 D VRI[MainActivity]: visibilityChanged oldVisibility=true newVisibility=false
+01-27 15:59:42.459   671  1420 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.466   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.466   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.466   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.477  6407  6469 I FontLog : (REDACTED) Received query %s, URI %s
+01-27 15:59:42.477  6407  6469 I FontLog : (REDACTED) Query [%s] resolved to %s
+01-27 15:59:42.480  6407  6469 I FontLog : (REDACTED) Fetch %s end status %s
+01-27 15:59:42.485  6407  6469 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+01-27 15:59:42.494  6407  6469 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+01-27 15:59:42.563  1624  1624 I agecropper.test: hiddenapi: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/compose/ui/platform/AndroidComposeView$Companion; (domain=app) using reflection: allowed
+01-27 15:59:42.703   671  1420 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@20a4a40c does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+01-27 15:59:42.705   519   754 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:42.711  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: PAUSED
+01-27 15:59:42.711  1624  1624 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=androidx.activity.ComponentActivity@200745f
+01-27 15:59:42.715  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: PRE_ON_CREATE
+01-27 15:59:42.715  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e
+01-27 15:59:42.718  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: CREATED
+01-27 15:59:42.718  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e
+01-27 15:59:42.718  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: STARTED
+01-27 15:59:42.718  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e
+01-27 15:59:42.719  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: RESUMED
+01-27 15:59:42.719  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e
+01-27 15:59:42.722   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:42.737   671   701 I ActivityTaskManager: Displayed com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity for user 0: +33ms
+01-27 15:59:42.744   519  1280 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:42.746  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: PAUSED
+01-27 15:59:42.747  1624  1624 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e
+01-27 15:59:42.749  1624  1624 D VRI[ComponentActivity]: visibilityChanged oldVisibility=true newVisibility=false
+01-27 15:59:42.753   577 11555 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.753   577 11555 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.753   577 11555 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:59:42.756   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:59:42.810   671   803 I ImeTracker: com.vshpyrka.imagecropper.app:2238d8bc: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+01-27 15:59:42.811  1155  1155 D InsetsController: hide(ime(), fromIme=false)
+01-27 15:59:42.811  1155  1155 I ImeTracker: com.vshpyrka.imagecropper.app:2238d8bc: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+01-27 15:59:42.814  6775  6775 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043
+01-27 15:59:42.815  6775  6775 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+01-27 15:59:42.815   671  1420 I ImeTracker: system_server:de6b0c68: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+01-27 15:59:42.816  6775  6775 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.vshpyrka.imagecropper.app, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+01-27 15:59:42.816  6775  6775 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+01-27 15:59:42.817   671   704 I ImeTracker: system_server:de6b0c68: onCancelled at PHASE_SERVER_SHOULD_HIDE
+01-27 15:59:42.822   476   556 I RanchuHwc: logCompositionFallbackIfChanged: layer 549 CompositionType fallback from 3 to 1
+01-27 15:59:42.966  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.968  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.968  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.969  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.969  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.969  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:42.969  1086  1097 W System  : A resource failed to call release.
+01-27 15:59:43.309  1624  1624 D VRI[InstrumentationActivityInvoker$EmptyActivity]: visibilityChanged oldVisibility=true newVisibility=false
+01-27 15:59:43.311  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: STOPPED
+01-27 15:59:43.311  1624  1624 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=androidx.activity.ComponentActivity@200745f
+01-27 15:59:43.318  1624  1624 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@a49d61a
+01-27 15:59:43.318  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@200745f in: DESTROYED
+01-27 15:59:43.318  1624  1624 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+01-27 15:59:43.320  1624  1624 D ViewRootImpl: Skipping stats log for color mode
+01-27 15:59:43.321  1624  1639 D IdlingRegistry: Unregistering idling resources: [androidx.compose.ui.test.EspressoLink@e923b49]
+01-27 15:59:43.324  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: STOPPED
+01-27 15:59:43.325  1624  1624 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@fd9467d
+01-27 15:59:43.326  1624  1624 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@809820e in: DESTROYED
+01-27 15:59:43.327  1624  1624 D ViewRootImpl: Skipping stats log for color mode
+01-27 15:59:43.337  1401  1401 D RecentsView: onTaskRemoved: 53, not handling task stack changes
+01-27 15:59:43.337  1401  1401 D RecentsView: onTaskRemoved: 53, not handling task stack changes
+01-27 15:59:43.338  1624  1639 I TestRunner: finished: imageCropper_rendersAndAcceptsInput(com.vshpyrka.imagecropper.ImageCropperTest)

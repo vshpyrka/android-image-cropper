@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.vshpyrka.imagecropper.image-cropper-release-36:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/Users/vshpyrka/.gradle/caches/9.3.0/transforms/174f6e539ff3d0581d7934a116d8b75b/transformed/material3/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.vshpyrka.imagecropper.image-cropper-mergeReleaseResources-34:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/Users/vshpyrka/.gradle/caches/9.3.0/transforms/174f6e539ff3d0581d7934a116d8b75b/transformed/material3/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}
