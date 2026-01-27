@@ -64,13 +64,13 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
 
     init {
         // Initialize crop rect to 80% of image size, centered
-        val w = imageBitmap.width.toFloat()
-        val h = imageBitmap.height.toFloat()
-        val rectW = w * 0.8f
-        val rectH = h * 0.8f
+        val imageWidth = imageBitmap.width.toFloat()
+        val imageHeight = imageBitmap.height.toFloat()
+        val rectWidth = imageWidth * 0.8f
+        val rectHeight = imageHeight * 0.8f
         cropRect = Rect(
-            offset = Offset((w - rectW) / 2f, (h - rectH) / 2f),
-            size = Size(rectW, rectH)
+            offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
+            size = Size(rectWidth, rectHeight)
         )
     }
 
@@ -118,35 +118,19 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     }
 
     /**
-     * Crops the original bitmap using the current [cropRect].
+     * Crops the original [imageBitmap] using the current [cropRect].
      *
-     * @param bitmap The original bitmap being cropped.
-     * @return The cropped [Bitmap].
-     */
-    fun crop(bitmap: Bitmap): Bitmap {
-        val r = cropRect
-        val left = r.left.toInt().coerceIn(0, bitmap.width - 1)
-        val top = r.top.toInt().coerceIn(0, bitmap.height - 1)
-        val width = r.width.toInt().coerceIn(1, bitmap.width - left)
-        val height = r.height.toInt().coerceIn(1, bitmap.height - top)
-
-        return Bitmap.createBitmap(bitmap, left, top, width, height)
-    }
-
-    /**
-     * Crops the internal image bitmap using the current [cropRect].
-     *
-     * @return The cropped [ImageBitmap].
+     * @return The cropped region as a new [ImageBitmap].
      */
     fun crop(): ImageBitmap {
-        val bitmap = imageBitmap.asAndroidBitmap()
-        val r = cropRect
-        val left = r.left.toInt().coerceIn(0, bitmap.width - 1)
-        val top = r.top.toInt().coerceIn(0, bitmap.height - 1)
-        val width = r.width.toInt().coerceIn(1, bitmap.width - left)
-        val height = r.height.toInt().coerceIn(1, bitmap.height - top)
+        val androidBitmap = imageBitmap.asAndroidBitmap()
+        val currentRect = cropRect
+        val left = currentRect.left.toInt().coerceIn(0, androidBitmap.width - 1)
+        val top = currentRect.top.toInt().coerceIn(0, androidBitmap.height - 1)
+        val width = currentRect.width.toInt().coerceIn(1, androidBitmap.width - left)
+        val height = currentRect.height.toInt().coerceIn(1, androidBitmap.height - top)
 
-        return Bitmap.createBitmap(bitmap, left, top, width, height).asImageBitmap()
+        return Bitmap.createBitmap(androidBitmap, left, top, width, height).asImageBitmap()
     }
 
     /**
@@ -161,14 +145,14 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         val scaleX = screenWidth / imageSize.width
         val scaleY = screenHeight / imageSize.height
         val scale = min(scaleX, scaleY)
-        val w = imageSize.width * scale
-        val h = imageSize.height * scale
-        val x = (screenWidth - w) / 2
-        val y = (screenHeight - h) / 2
+        val scaledWidth = imageSize.width * scale
+        val scaledHeight = imageSize.height * scale
+        val offsetX = (screenWidth - scaledWidth) / 2
+        val offsetY = (screenHeight - scaledHeight) / 2
         coroutineScope {
             scaleAnim.snapTo(scale)
-            offsetXAnim.snapTo(x)
-            offsetYAnim.snapTo(y)
+            offsetXAnim.snapTo(offsetX)
+            offsetYAnim.snapTo(offsetY)
         }
     }
 
@@ -200,10 +184,15 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     /**
      * Handles the start of a touch interaction.
      */
-    internal fun onInteractionStart(pos: Offset, minTouchSize: Float) {
-        val sCropRect =
+    internal fun onInteractionStart(position: Offset, minTouchSize: Float) {
+        val screenCropRect =
             cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
-        if (getHitHandle(pos, sCropRect, minTouchSize) != null || sCropRect.contains(pos)) {
+        if (getHitHandle(
+                position,
+                screenCropRect,
+                minTouchSize
+            ) != null || screenCropRect.contains(position)
+        ) {
             isInteracting = true
         }
     }
@@ -218,17 +207,17 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     /**
      * Handles the start of a drag or resize operation.
      */
-    internal fun onDragStart(pos: Offset, minTouchSize: Float) {
-        val sCropRect =
+    internal fun onDragStart(position: Offset, minTouchSize: Float) {
+        val screenCropRect =
             cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
-        val handleHit = getHitHandle(pos, sCropRect, minTouchSize)
+        val handleHit = getHitHandle(position, screenCropRect, minTouchSize)
         if (handleHit != null) {
             draggingHandle = handleHit
-            dragStartOffset = pos
+            dragStartOffset = position
             initialCropRect = cropRect
-        } else if (sCropRect.contains(pos)) {
+        } else if (screenCropRect.contains(position)) {
             draggingHandle = Handle.Center
-            dragStartOffset = pos
+            dragStartOffset = position
             initialCropRect = cropRect
         } else {
             draggingHandle = null
@@ -241,38 +230,38 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     internal fun onDrag(changePosition: Offset, baseMinCropPx: Float) {
         val handle = draggingHandle ?: return
         val totalDeltaImage = (changePosition - dragStartOffset) / scaleAnim.value
-        val r = initialCropRect
+        val rectBeforeDrag = initialCropRect
 
         // Minimum crop size should not exceed image dimensions
-        val minW = min(imageSize.width, baseMinCropPx)
-        val minH = min(imageSize.height, baseMinCropPx)
+        val minWidth = min(imageSize.width, baseMinCropPx)
+        val minHeight = min(imageSize.height, baseMinCropPx)
 
         when (handle) {
             Handle.Center -> {
-                val newLeft = (r.left + totalDeltaImage.x)
-                    .coerceIn(0f, imageSize.width - r.width)
-                val newTop = (r.top + totalDeltaImage.y)
-                    .coerceIn(0f, imageSize.height - r.height)
-                cropRect = Rect(Offset(newLeft, newTop), r.size)
+                val newLeft = (rectBeforeDrag.left + totalDeltaImage.x)
+                    .coerceIn(0f, imageSize.width - rectBeforeDrag.width)
+                val newTop = (rectBeforeDrag.top + totalDeltaImage.y)
+                    .coerceIn(0f, imageSize.height - rectBeforeDrag.height)
+                cropRect = Rect(Offset(newLeft, newTop), rectBeforeDrag.size)
             }
 
             else -> {
-                var left = r.left
-                var top = r.top
-                var right = r.right
-                var bottom = r.bottom
+                var left = rectBeforeDrag.left
+                var top = rectBeforeDrag.top
+                var right = rectBeforeDrag.right
+                var bottom = rectBeforeDrag.bottom
                 if (handle.isLeft) left += totalDeltaImage.x
                 if (handle.isRight) right += totalDeltaImage.x
                 if (handle.isTop) top += totalDeltaImage.y
                 if (handle.isBottom) bottom += totalDeltaImage.y
 
-                if (right - left < minW) {
-                    if (handle.isLeft) left = right - minW
-                    else right = left + minW
+                if (right - left < minWidth) {
+                    if (handle.isLeft) left = right - minWidth
+                    else right = left + minWidth
                 }
-                if (bottom - top < minH) {
-                    if (handle.isTop) top = bottom - minH
-                    else bottom = top + minH
+                if (bottom - top < minHeight) {
+                    if (handle.isTop) top = bottom - minHeight
+                    else bottom = top + minHeight
                 }
 
                 left = left.coerceAtLeast(0f)
@@ -424,18 +413,18 @@ fun ImageCropper(
                         val gridStrokeWidth = 1.dp.toPx()
                         val gridColor = Color.White.copy(alpha = 0.7f)
                         for (i in 1..2) {
-                            val x = screenCropRect.left + screenCropRect.width * i / 3f
+                            val gridX = screenCropRect.left + screenCropRect.width * i / 3f
                             drawLine(
                                 color = gridColor,
-                                start = Offset(x, screenCropRect.top),
-                                end = Offset(x, screenCropRect.bottom),
+                                start = Offset(gridX, screenCropRect.top),
+                                end = Offset(gridX, screenCropRect.bottom),
                                 strokeWidth = gridStrokeWidth
                             )
-                            val y = screenCropRect.top + screenCropRect.height * i / 3f
+                            val gridY = screenCropRect.top + screenCropRect.height * i / 3f
                             drawLine(
                                 color = gridColor,
-                                start = Offset(screenCropRect.left, y),
-                                end = Offset(screenCropRect.right, y),
+                                start = Offset(screenCropRect.left, gridY),
+                                end = Offset(screenCropRect.right, gridY),
                                 strokeWidth = gridStrokeWidth
                             )
                         }
@@ -605,23 +594,23 @@ internal enum class Handle {
 /**
  * Determines which handle (if any) is located at the given touch position.
  *
- * @param pos The touch position in screen coordinates.
- * @param rect The crop rectangle in screen coordinates.
+ * @param touchPosition The touch position in screen coordinates.
+ * @param cropRect The crop rectangle in screen coordinates.
  * @param touchRadius The radius around each handle to consider a hit.
  * @return The [Handle] hit, or null if none.
  */
-private fun getHitHandle(pos: Offset, rect: Rect, touchRadius: Float): Handle? {
-    fun hit(target: Offset) = (target - pos).getDistance() <= touchRadius
+private fun getHitHandle(touchPosition: Offset, cropRect: Rect, touchRadius: Float): Handle? {
+    fun hit(target: Offset) = (target - touchPosition).getDistance() <= touchRadius
 
-    if (hit(rect.topLeft)) return Handle.TopLeft
-    if (hit(rect.topRight)) return Handle.TopRight
-    if (hit(rect.bottomLeft)) return Handle.BottomLeft
-    if (hit(rect.bottomRight)) return Handle.BottomRight
+    if (hit(cropRect.topLeft)) return Handle.TopLeft
+    if (hit(cropRect.topRight)) return Handle.TopRight
+    if (hit(cropRect.bottomLeft)) return Handle.BottomLeft
+    if (hit(cropRect.bottomRight)) return Handle.BottomRight
 
-    if (hit(rect.topCenter)) return Handle.Top
-    if (hit(rect.bottomCenter)) return Handle.Bottom
-    if (hit(rect.centerLeft)) return Handle.Left
-    if (hit(rect.centerRight)) return Handle.Right
+    if (hit(cropRect.topCenter)) return Handle.Top
+    if (hit(cropRect.bottomCenter)) return Handle.Bottom
+    if (hit(cropRect.centerLeft)) return Handle.Left
+    if (hit(cropRect.centerRight)) return Handle.Right
 
     return null
 }
