@@ -60,13 +60,20 @@ class ImageCropperState(val bitmap: Bitmap) {
         internal set
 
     /** The current crop rectangle in image coordinates. */
-    var cropRect by mutableStateOf(
-        Rect(
-            offset = Offset(bitmap.width * 0.1f, bitmap.height * 0.1f),
-            size = Size(bitmap.width * 0.8f, bitmap.height * 0.8f)
-        )
-    )
+    var cropRect by mutableStateOf(Rect.Zero)
         internal set
+
+    init {
+        // Initialize crop rect to 80% of image size, centered
+        val w = bitmap.width.toFloat()
+        val h = bitmap.height.toFloat()
+        val rectW = w * 0.8f
+        val rectH = h * 0.8f
+        cropRect = Rect(
+            offset = Offset((w - rectW) / 2f, (h - rectH) / 2f),
+            size = Size(rectW, rectH)
+        )
+    }
 
     // Animation states
     internal val scaleAnim = Animatable(1f)
@@ -216,10 +223,14 @@ class ImageCropperState(val bitmap: Bitmap) {
     /**
      * Handles the drag or resize operation.
      */
-    internal fun onDrag(changePosition: Offset, minCropSize: Float) {
+    internal fun onDrag(changePosition: Offset, baseMinCropPx: Float) {
         val handle = draggingHandle ?: return
         val totalDeltaImage = (changePosition - dragStartOffset) / scaleAnim.value
         val r = initialCropRect
+
+        // Minimum crop size should not exceed image dimensions
+        val minW = min(imageSize.width, baseMinCropPx)
+        val minH = min(imageSize.height, baseMinCropPx)
 
         when (handle) {
             Handle.Center -> {
@@ -240,13 +251,13 @@ class ImageCropperState(val bitmap: Bitmap) {
                 if (handle.isTop) top += totalDeltaImage.y
                 if (handle.isBottom) bottom += totalDeltaImage.y
 
-                if (right - left < minCropSize) {
-                    if (handle.isLeft) left = right - minCropSize
-                    else right = left + minCropSize
+                if (right - left < minW) {
+                    if (handle.isLeft) left = right - minW
+                    else right = left + minW
                 }
-                if (bottom - top < minCropSize) {
-                    if (handle.isTop) top = bottom - minCropSize
-                    else bottom = top + minCropSize
+                if (bottom - top < minH) {
+                    if (handle.isTop) top = bottom - minH
+                    else bottom = top + minH
                 }
 
                 left = left.coerceAtLeast(0f)
@@ -296,7 +307,7 @@ fun ImageCropper(
 ) {
     val density = LocalDensity.current
     val minTouchSize = with(density) { 48.dp.toPx() }
-    val minCropSize = with(density) { 100.dp.toPx() }
+    val baseMinCropSize = with(density) { 48.dp.toPx() } // Using 48dp as a reasonable base minimum
     val centerMargin = with(density) { 20.dp.toPx() }
 
     Box(
@@ -345,7 +356,7 @@ fun ImageCropper(
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                state.onDrag(change.position, minCropSize)
+                                state.onDrag(change.position, baseMinCropSize)
                             }
                         )
                     }
