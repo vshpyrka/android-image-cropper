@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntSize
 import com.vshpyrka.imagecropper.BitmapLoader
 import com.vshpyrka.imagecropper.ImageCropper
 import java.io.File
@@ -177,19 +179,24 @@ private fun ImageCropperContent(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    var containerSize by remember { mutableStateOf(IntSize.Zero) }
 
-    BoxWithConstraints(modifier = modifier) {
-        val constraints = this.constraints
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .onSizeChanged { containerSize = it }
+    ) {
+        LaunchedEffect(state.currentUri, state.assetToLoad, containerSize) {
+            if (containerSize == IntSize.Zero) return@LaunchedEffect
 
-        LaunchedEffect(state.currentUri, state.assetToLoad) {
             if (state.currentUri != null) {
                 state.isLoading = true
                 android.util.Log.d("MainActivity", "Loading URI: ${state.currentUri}")
                 val bitmap = BitmapLoader.loadBitmap(
                     context,
                     state.currentUri!!,
-                    constraints.maxWidth,
-                    constraints.maxHeight
+                    containerSize.width,
+                    containerSize.height
                 )
                 state.imageBitmap = bitmap
                 state.isLoading = false
@@ -198,8 +205,8 @@ private fun ImageCropperContent(
                 val bitmap = BitmapLoader.loadBitmapFromAssets(
                     context,
                     state.assetToLoad!!,
-                    constraints.maxWidth,
-                    constraints.maxHeight
+                    containerSize.width,
+                    containerSize.height
                 )
                 state.imageBitmap = bitmap
                 state.isLoading = false
