@@ -1,6 +1,11 @@
-# 2026-01-27T13:09:37.063054Z:
+# proto-message: google.testing.platform.proto.api.core.TestSuiteResult
+# 2026-01-27T13:59:47.929902Z:
 test_suite_meta_data {
   scheduled_test_case_count: 1
+  device {
+    id: "emulator-5554"
+    friendly_name: "primary"
+  }
 }
 test_status: PASSED
 test_result {
@@ -9,12 +14,16 @@ test_result {
     test_package: "com.vshpyrka.imagecropper"
     test_method: "imageCropper_rendersAndAcceptsInput"
     start_time {
-      seconds: 1769519373
-      nanos: 467000000
+      seconds: 1769522385
+      nanos: 638000000
     }
     end_time {
-      seconds: 1769519375
-      nanos: 746000000
+      seconds: 1769522387
+      nanos: 487000000
+    }
+    device {
+      id: "emulator-5554"
+      friendly_name: "primary"
     }
   }
   test_status: PASSED

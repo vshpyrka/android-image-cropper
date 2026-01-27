@@ -1,4 +1,4 @@
-#Tue Jan 27 15:09:22 EET 2026
+#Tue Jan 27 15:59:31 EET 2026
 base.0=/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/intermediates/dex/debugAndroidTest/mergeExtDexDebugAndroidTest/classes.dex
 base.1=/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/intermediates/dex/debugAndroidTest/mergeLibDexDebugAndroidTest/8/classes.dex
 base.2=/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/intermediates/dex/debugAndroidTest/mergeProjectDexDebugAndroidTest/0/classes.dex

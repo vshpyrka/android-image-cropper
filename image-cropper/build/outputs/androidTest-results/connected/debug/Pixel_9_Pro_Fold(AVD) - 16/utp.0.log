@@ -20,6 +20,7 @@ INFO: Configuring AndroidTestApkInstallerPlugin: apks_to_install {
   }
   uninstall_after_test: true
 }
+instrumentation_target_package_id: "com.vshpyrka.imagecropper.test"
 
 INFO: No installables found in test fixture. Nothing to install.
 INFO: Installing [/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/apk/androidTest/debug/image-cropper-debug-androidTest.apk] on device emulator-5554.

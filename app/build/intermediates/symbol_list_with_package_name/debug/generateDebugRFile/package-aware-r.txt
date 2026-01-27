@@ -1,0 +1,3 @@
+com.vshpyrka.imagecropper.app
+string app_name
+xml file_paths

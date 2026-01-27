@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.vshpyrka.imagecropper.test.image-cropper-mergeDebugAndroidTestResources-39:/values-v28/values-v28.xml",
+            "outputFile": "com.vshpyrka.imagecropper.test.image-cropper-mergeDebugAndroidTestResources-37:/values-v28/values-v28.xml",
             "map": [
                 {
-                    "source": "/Users/vshpyrka/.gradle/caches/9.3.0/transforms/c692608d8547c2277f25a818148ad154/transformed/core-1.6.1/res/values-v28/values.xml",
+                    "source": "/Users/vshpyrka/.gradle/caches/9.3.0/transforms/f152baf0e4dc4d304dccebb60f6ef6a3/transformed/core-1.7.0/res/values-v28/values.xml",
                     "from": {
                         "startLines": "4,13",
                         "startColumns": "0,0",

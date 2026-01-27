@@ -1,7 +1,9 @@
 
-Æ
-n
-ImageCropperTestcom.vshpyrka.imagecropper#imageCropper_rendersAndAcceptsInput2çÚ‚À¿µ◊ﬁ:èÚ‚ÀÄù‹„"Ä
+
+emulator-5554primary…
+à
+ImageCropperTestcom.vshpyrka.imagecropper#imageCropper_rendersAndAcceptsInput2—â„ÀÄ∑ú∞:”â„À¿èúËB
+emulator-5554primary"Ä
 
 logcatandroidÍ
 Á/Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/androidTest-results/connected/debug/Pixel_9_Pro_Fold(AVD) - 16/logcat-com.vshpyrka.imagecropper.ImageCropperTest-imageCropper_rendersAndAcceptsInput.txt"∫

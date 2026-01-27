@@ -15,7 +15,7 @@ INSTRUMENTATION_STATUS: test=imageCropper_rendersAndAcceptsInput
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_RESULT: stream=
 
-Time: 3.054
+Time: 1.839
 
 OK (1 test)
 

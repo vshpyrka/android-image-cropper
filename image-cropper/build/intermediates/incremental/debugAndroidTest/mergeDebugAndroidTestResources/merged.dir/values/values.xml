@@ -23,6 +23,8 @@
         
         <enum name="adjacent" value="2"/>
     </attr>
+    <attr format="string" name="fontProviderSystemFontFamily"/>
+    <attr format="string" name="fontVariationSettings"/>
     <attr format="reference" name="nestedScrollViewStyle"/>
     <attr format="enum" name="splitChangeAnimation">
         
@@ -181,6 +183,7 @@
     <item name="transition_transform" type="id"/>
     <id name="view_tree_disjoint_parent"/>
     <id name="view_tree_lifecycle_owner"/>
+    <id name="view_tree_navigation_event_dispatcher_owner"/>
     <id name="view_tree_on_back_pressed_dispatcher_owner"/>
     <id name="view_tree_saved_state_registry_owner"/>
     <id name="view_tree_view_model_store_owner"/>
@@ -417,7 +420,7 @@
             <enum name="forever" value="-1"/>
         </attr>
         
-        <attr format="string" name="fontProviderSystemFontFamily"/>
+        <attr name="fontProviderSystemFontFamily"/>
     </declare-styleable>
     <declare-styleable name="FontFamilyFont">
         
@@ -430,7 +433,7 @@
         
         <attr format="integer" name="fontWeight"/>
         
-        <attr format="string" name="fontVariationSettings"/>
+        <attr name="fontVariationSettings"/>
         
         <attr format="integer" name="ttcIndex"/>
         
@@ -439,6 +442,14 @@
         <attr name="android:fontWeight"/>
         <attr name="android:fontVariationSettings"/>
         <attr name="android:ttcIndex"/>
+    </declare-styleable>
+    <declare-styleable name="FontFamilyProviderFallback">
+        
+        <attr name="fontProviderQuery"/>
+        
+        <attr name="fontProviderSystemFontFamily"/>
+        
+        <attr name="fontVariationSettings"/>
     </declare-styleable>
     <declare-styleable name="GradientColor">
         

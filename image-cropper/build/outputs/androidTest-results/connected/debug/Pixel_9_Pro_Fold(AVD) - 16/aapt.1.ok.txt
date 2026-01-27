@@ -1,7 +1,7 @@
-EXECUTING: /Users/vshpyrka/Library/Android/sdk/build-tools/35.0.0/aapt dump badging /Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/apk/androidTest/debug/image-cropper-debug-androidTest.apk
+EXECUTING: /Users/vshpyrka/Library/Android/sdk/build-tools/36.0.0/aapt dump badging /Users/vshpyrka/AndroidStudioProjects/ImageCropper/image-cropper/build/outputs/apk/androidTest/debug/image-cropper-debug-androidTest.apk
 CURRENT_WORKING_DIRECTORY: /Users/vshpyrka/AndroidStudioProjects/ImageCropper
-START_TIME: 2026-01-27 15:09:36.803
-START_TIME-NANOS: 2026-01-27 15:09:36.803895000
+START_TIME: 2026-01-27 15:59:47.689
+START_TIME-NANOS: 2026-01-27 15:59:47.689360000
 ENVIRONMENT:
 
 *****************************************
@@ -9,12 +9,11 @@ STDOUT/STDERR BELOW
 ===================
 package: name='com.vshpyrka.imagecropper.test' versionCode='' versionName='' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 sdkVersion:'24'
-targetSdkVersion:'24'
+targetSdkVersion:'36'
 uses-permission: name='android.permission.REORDER_TASKS'
 uses-permission: name='com.vshpyrka.imagecropper.test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
 application: label='' icon=''
 application-debuggable
-uses-library:'android.test.runner'
 uses-library-not-required:'androidx.window.extensions'
 uses-library-not-required:'androidx.window.sidecar'
 feature-group: label=''
@@ -28,7 +27,7 @@ locales: '--_--' 'af' 'am' 'ar' 'as' 'az' 'be' 'bg' 'bn' 'bs' 'ca' 'cs' 'da' 'de
 densities: '160' '240' '320'
 native-code: 'arm64-v8a' 'armeabi-v7a' 'x86' 'x86_64'
 ===================
-END_TIME: 2026-01-27 15:09:36.907
-END_TIME-NANOS: 2026-01-27 15:09:36.907670000
-DURATION: 103ms
+END_TIME: 2026-01-27 15:59:47.749
+END_TIME-NANOS: 2026-01-27 15:59:47.749749000
+DURATION: 60ms
 EXIT CODE: 0
