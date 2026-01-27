@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Stable
-class ImageCropperState {
+internal class ImageCropperState {
     var imageBitmap by mutableStateOf<Bitmap?>(null)
     var currentUri by mutableStateOf<Uri?>(null)
     var assetToLoad by mutableStateOf<String?>(null)
@@ -63,7 +63,7 @@ class ImageCropperState {
 }
 
 @Composable
-fun rememberImageCropperState(): ImageCropperState {
+internal fun rememberImageCropperState(): ImageCropperState {
     return remember { ImageCropperState() }
 }
 
@@ -91,26 +91,10 @@ fun ImageCropperApp() {
         }
     }
 
-    fun launchCamera() {
-        val file = createImageFile(context)
-        val uri = FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.provider",
-            file
-        )
-        tempCameraUri = uri
-        takePicture.launch(uri)
-    }
-
     Scaffold(
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(onClick = {
+            ImageCropperBottomBar(
+                onGalleryClick = {
                     try {
                         pickMedia.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -123,14 +107,17 @@ fun ImageCropperApp() {
                             android.widget.Toast.LENGTH_SHORT
                         ).show()
                     }
-                }) {
-                    Icon(Icons.Default.Image, contentDescription = null)
-                    Text("Gallery", modifier = Modifier.padding(start = 8.dp))
-                }
-
-                Button(onClick = {
+                },
+                onCameraClick = {
                     try {
-                        launchCamera()
+                        val file = createImageFile(context)
+                        val uri = FileProvider.getUriForFile(
+                            context,
+                            "${context.packageName}.provider",
+                            file
+                        )
+                        tempCameraUri = uri
+                        takePicture.launch(uri)
                     } catch (e: Exception) {
                         android.util.Log.e("MainActivity", "Error launching camera", e)
                         android.widget.Toast.makeText(
@@ -139,62 +126,95 @@ fun ImageCropperApp() {
                             android.widget.Toast.LENGTH_SHORT
                         ).show()
                     }
-                }) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = null)
-                    Text("Camera", modifier = Modifier.padding(start = 8.dp))
-                }
-
-                Button(onClick = {
+                },
+                onAssetsClick = {
                     state.assetToLoad = "nature.png"
-                }) {
-                    Icon(Icons.Default.Image, contentDescription = null)
-                    Text("Assets", modifier = Modifier.padding(start = 8.dp))
                 }
-            }
+            )
         }
     ) { paddingVals ->
-        BoxWithConstraints(
+        ImageCropperContent(
+            state = state,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingVals)
-        ) {
-            val constraints = this.constraints
+        )
+    }
+}
 
-            LaunchedEffect(state.currentUri, state.assetToLoad) {
-                if (state.currentUri != null) {
-                    state.isLoading = true
-                    android.util.Log.d("MainActivity", "Loading URI: ${state.currentUri}")
-                    val bitmap = BitmapLoader.loadBitmap(
-                        context,
-                        state.currentUri!!,
-                        constraints.maxWidth,
-                        constraints.maxHeight
-                    )
-                    state.imageBitmap = bitmap
-                    state.isLoading = false
-                } else if (state.assetToLoad != null) {
-                    state.isLoading = true
-                    val bitmap = BitmapLoader.loadBitmapFromAssets(
-                        context,
-                        state.assetToLoad!!,
-                        constraints.maxWidth,
-                        constraints.maxHeight
-                    )
-                    state.imageBitmap = bitmap
-                    state.isLoading = false
-                    state.assetToLoad = null // Reset
-                }
+@Composable
+private fun ImageCropperBottomBar(
+    onGalleryClick: () -> Unit,
+    onCameraClick: () -> Unit,
+    onAssetsClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Button(onClick = onGalleryClick) {
+            Icon(Icons.Default.Image, contentDescription = null)
+            Text("Gallery", modifier = Modifier.padding(start = 8.dp))
+        }
+
+        Button(onClick = onCameraClick) {
+            Icon(Icons.Default.CameraAlt, contentDescription = null)
+            Text("Camera", modifier = Modifier.padding(start = 8.dp))
+        }
+
+        Button(onClick = onAssetsClick) {
+            Icon(Icons.Default.Image, contentDescription = null)
+            Text("Assets", modifier = Modifier.padding(start = 8.dp))
+        }
+    }
+}
+
+@Composable
+private fun ImageCropperContent(
+    state: ImageCropperState,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    BoxWithConstraints(modifier = modifier) {
+        val constraints = this.constraints
+
+        LaunchedEffect(state.currentUri, state.assetToLoad) {
+            if (state.currentUri != null) {
+                state.isLoading = true
+                android.util.Log.d("MainActivity", "Loading URI: ${state.currentUri}")
+                val bitmap = BitmapLoader.loadBitmap(
+                    context,
+                    state.currentUri!!,
+                    constraints.maxWidth,
+                    constraints.maxHeight
+                )
+                state.imageBitmap = bitmap
+                state.isLoading = false
+            } else if (state.assetToLoad != null) {
+                state.isLoading = true
+                val bitmap = BitmapLoader.loadBitmapFromAssets(
+                    context,
+                    state.assetToLoad!!,
+                    constraints.maxWidth,
+                    constraints.maxHeight
+                )
+                state.imageBitmap = bitmap
+                state.isLoading = false
+                state.assetToLoad = null // Reset
             }
+        }
 
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else {
-                state.imageBitmap?.let { bmp ->
-                    ImageCropper(bitmap = bmp)
-                } ?: run {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Select an image to start cropping")
-                    }
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else {
+            state.imageBitmap?.let { bmp ->
+                ImageCropper(bitmap = bmp)
+            } ?: run {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Select an image to start cropping")
                 }
             }
         }
