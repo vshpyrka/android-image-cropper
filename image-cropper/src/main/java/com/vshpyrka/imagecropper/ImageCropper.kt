@@ -4,7 +4,10 @@ import android.graphics.Bitmap
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -144,6 +147,7 @@ fun ImageCropper(
             var draggingHandle by remember { mutableStateOf<Handle?>(null) } // null, or Handle enum
             var dragStartOffset by remember { mutableStateOf(Offset.Zero) }
             var initialCropRect by remember { mutableStateOf(Rect.Zero) }
+            var isInteracting by remember { mutableStateOf(false) }
 
             val scale = scaleAnim.value
             val offset = Offset(offsetXAnim.value, offsetYAnim.value)
@@ -154,6 +158,22 @@ fun ImageCropper(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .pointerInput(Unit) {
+                        awaitEachGesture {
+                            val down = awaitFirstDown(requireUnconsumed = false)
+                            val currentScale = scaleAnim.value
+                            val currentOffset = Offset(offsetXAnim.value, offsetYAnim.value)
+                            val sCropRect = cropRect.toScreen(currentScale, currentOffset)
+
+                            if (getHitHandle(down.position, sCropRect, minTouchSize) != null ||
+                                sCropRect.contains(down.position)
+                            ) {
+                                isInteracting = true
+                            }
+                            waitForUpOrCancellation()
+                            isInteracting = false
+                        }
+                    }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { offset ->
@@ -277,6 +297,45 @@ fun ImageCropper(
                         size = screenCropRect.size,
                         style = Stroke(width = 2.dp.toPx())
                     )
+
+                    // Draw Grid Guidelines
+                    if (isInteracting || draggingHandle != null) {
+                        val oneThirdW = screenCropRect.width / 3f
+                        val twoThirdsW = oneThirdW * 2f
+                        val oneThirdH = screenCropRect.height / 3f
+                        val twoThirdsH = oneThirdH * 2f
+
+                        val gridStrokeWidth = 1.dp.toPx()
+                        val gridColor = Color.White.copy(alpha = 0.7f)
+
+                        // Vertical lines
+                        drawLine(
+                            color = gridColor,
+                            start = Offset(screenCropRect.left + oneThirdW, screenCropRect.top),
+                            end = Offset(screenCropRect.left + oneThirdW, screenCropRect.bottom),
+                            strokeWidth = gridStrokeWidth
+                        )
+                        drawLine(
+                            color = gridColor,
+                            start = Offset(screenCropRect.left + twoThirdsW, screenCropRect.top),
+                            end = Offset(screenCropRect.left + twoThirdsW, screenCropRect.bottom),
+                            strokeWidth = gridStrokeWidth
+                        )
+
+                        // Horizontal lines
+                        drawLine(
+                            color = gridColor,
+                            start = Offset(screenCropRect.left, screenCropRect.top + oneThirdH),
+                            end = Offset(screenCropRect.right, screenCropRect.top + oneThirdH),
+                            strokeWidth = gridStrokeWidth
+                        )
+                        drawLine(
+                            color = gridColor,
+                            start = Offset(screenCropRect.left, screenCropRect.top + twoThirdsH),
+                            end = Offset(screenCropRect.right, screenCropRect.top + twoThirdsH),
+                            strokeWidth = gridStrokeWidth
+                        )
+                    }
 
                     // Draw Handles Visuals
                     val handleSize = 20.dp.toPx()
