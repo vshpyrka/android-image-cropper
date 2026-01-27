@@ -48,9 +48,11 @@ import kotlin.math.roundToInt
  * @param bitmap The [Bitmap] that will be used for cropping calculations.
  */
 @Stable
-class ImageCropperState(
-    bitmap: Bitmap
-) {
+class ImageCropperState(val bitmap: Bitmap) {
+
+    /** The original image as an [androidx.compose.ui.graphics.ImageBitmap] for rendering. */
+    internal val imageBitmap = bitmap.asImageBitmap()
+
     /** The size of the original image being cropped. */
     var imageSize by mutableStateOf(
         Size(bitmap.width.toFloat(), bitmap.height.toFloat())
@@ -296,7 +298,6 @@ fun ImageCropper(
     val minTouchSize = with(density) { 48.dp.toPx() }
     val minCropSize = with(density) { 100.dp.toPx() }
     val centerMargin = with(density) { 20.dp.toPx() }
-    val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
 
     Box(
         modifier = modifier
@@ -357,7 +358,7 @@ fun ImageCropper(
                             scale(scale, scale, pivot = Offset.Zero)
                         },
                         drawBlock = {
-                            drawImage(imageBitmap)
+                            drawImage(state.imageBitmap)
                         }
                     )
 
