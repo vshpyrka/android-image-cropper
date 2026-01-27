@@ -26,16 +26,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.withSave
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -96,6 +96,17 @@ class ImageCropperState(
      */
     internal val showGrid: Boolean
         get() = isInteracting || draggingHandle != null
+
+    /**
+     * Initializes the image viewport (scale and offset) if it hasn't been done yet
+     * and the parent dimensions are available.
+     */
+    internal suspend fun initializeViewportIfNeeded() {
+        if (!initialized && parentSize.width > 0f && parentSize.height > 0f) {
+            fitImageToScreen()
+            initialized = true
+        }
+    }
 
     /**
      * Crops the original bitmap using the current [cropRect].
@@ -284,6 +295,7 @@ fun ImageCropper(
     val minTouchSize = with(density) { 48.dp.toPx() }
     val minCropSize = with(density) { 100.dp.toPx() }
     val centerMargin = with(density) { 20.dp.toPx() }
+    val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
 
     Box(
         modifier = modifier
@@ -296,10 +308,7 @@ fun ImageCropper(
             val scope = rememberCoroutineScope()
 
             LaunchedEffect(bitmap, state.parentSize) {
-                if (!state.initialized && state.parentSize.width > 0 && state.parentSize.height > 0) {
-                    state.fitImageToScreen()
-                    state.initialized = true
-                }
+                state.initializeViewportIfNeeded()
             }
 
             val scale = state.scaleAnim.value
@@ -340,12 +349,11 @@ fun ImageCropper(
             ) {
                 val screenCropRect = state.cropRect.toScreen(scale, offset)
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    with(drawContext.canvas.nativeCanvas) {
-                        withSave {
-                            translate(offset.x, offset.y)
-                            scale(scale, scale)
-                            drawBitmap(bitmap, 0f, 0f, null)
-                        }
+                    withTransform({
+                        translate(offset.x, offset.y)
+                        scale(scale, scale, pivot = Offset.Zero)
+                    }) {
+                        drawImage(imageBitmap)
                     }
 
                     // Overlay
