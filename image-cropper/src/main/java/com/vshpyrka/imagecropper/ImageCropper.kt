@@ -79,17 +79,23 @@ class ImageCropperState(
         internal set
 
     /** The current handle being dragged, or null if no interaction is occurring. */
-    internal var draggingHandle by mutableStateOf<Handle?>(null)
+    private var draggingHandle by mutableStateOf<Handle?>(null)
 
     /** The initial touch position when a drag started. */
-    internal var dragStartOffset by mutableStateOf(Offset.Zero)
+    private var dragStartOffset by mutableStateOf(Offset.Zero)
 
     /** The crop rectangle's value when a drag/resize operation started. */
-    internal var initialCropRect by mutableStateOf(Rect.Zero)
+    private var initialCropRect by mutableStateOf(Rect.Zero)
 
     /** Whether the user is currently interacting with the crop rectangle. */
     var isInteracting by mutableStateOf(false)
         internal set
+
+    /**
+     * Checks if a grid should be drawn.
+     */
+    internal val showGrid: Boolean
+        get() = isInteracting || draggingHandle != null
 
     /**
      * Crops the original bitmap using the current [cropRect].
@@ -154,6 +160,97 @@ class ImageCropperState(
             launch { offsetYAnim.animateTo(newY, animationSpec = tween(300)) }
         }
     }
+
+    /**
+     * Handles the start of a touch interaction.
+     */
+    internal fun onInteractionStart(pos: Offset, minTouchSize: Float) {
+        val sCropRect =
+            cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
+        if (getHitHandle(pos, sCropRect, minTouchSize) != null || sCropRect.contains(pos)) {
+            isInteracting = true
+        }
+    }
+
+    /**
+     * Handles the end of a touch interaction.
+     */
+    internal fun onInteractionEnd() {
+        isInteracting = false
+    }
+
+    /**
+     * Handles the start of a drag or resize operation.
+     */
+    internal fun onDragStart(pos: Offset, minTouchSize: Float) {
+        val sCropRect =
+            cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
+        val handleHit = getHitHandle(pos, sCropRect, minTouchSize)
+        if (handleHit != null) {
+            draggingHandle = handleHit
+            dragStartOffset = pos
+            initialCropRect = cropRect
+        } else if (sCropRect.contains(pos)) {
+            draggingHandle = Handle.Center
+            dragStartOffset = pos
+            initialCropRect = cropRect
+        } else {
+            draggingHandle = null
+        }
+    }
+
+    /**
+     * Handles the drag or resize operation.
+     */
+    internal fun onDrag(changePosition: Offset, minCropSize: Float) {
+        val handle = draggingHandle ?: return
+        val totalDeltaImage = (changePosition - dragStartOffset) / scaleAnim.value
+        val r = initialCropRect
+
+        when (handle) {
+            Handle.Center -> {
+                val newLeft = (r.left + totalDeltaImage.x)
+                    .coerceIn(0f, imageSize.width - r.width)
+                val newTop = (r.top + totalDeltaImage.y)
+                    .coerceIn(0f, imageSize.height - r.height)
+                cropRect = Rect(Offset(newLeft, newTop), r.size)
+            }
+
+            else -> {
+                var left = r.left
+                var top = r.top
+                var right = r.right
+                var bottom = r.bottom
+                if (handle.isLeft) left += totalDeltaImage.x
+                if (handle.isRight) right += totalDeltaImage.x
+                if (handle.isTop) top += totalDeltaImage.y
+                if (handle.isBottom) bottom += totalDeltaImage.y
+
+                if (right - left < minCropSize) {
+                    if (handle.isLeft) left = right - minCropSize
+                    else right = left + minCropSize
+                }
+                if (bottom - top < minCropSize) {
+                    if (handle.isTop) top = bottom - minCropSize
+                    else bottom = top + minCropSize
+                }
+
+                left = left.coerceAtLeast(0f)
+                top = top.coerceAtLeast(0f)
+                right = right.coerceAtMost(imageSize.width)
+                bottom = bottom.coerceAtMost(imageSize.height)
+                cropRect = Rect(left, top, right, bottom)
+            }
+        }
+    }
+
+    /**
+     * Handles the end or cancellation of a drag operation.
+     */
+    internal suspend fun onDragFinished(marginPx: Float) {
+        draggingHandle = null
+        centerCropRectOnScreen(marginPx)
+    }
 }
 
 /**
@@ -214,95 +311,29 @@ fun ImageCropper(
                     .pointerInput(Unit) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
-                            val currentScale = state.scaleAnim.value
-                            val currentOffset =
-                                Offset(state.offsetXAnim.value, state.offsetYAnim.value)
-                            val sCropRect = state.cropRect.toScreen(currentScale, currentOffset)
-
-                            if (getHitHandle(down.position, sCropRect, minTouchSize) != null ||
-                                sCropRect.contains(down.position)
-                            ) {
-                                state.isInteracting = true
-                            }
+                            state.onInteractionStart(down.position, minTouchSize)
                             waitForUpOrCancellation()
-                            state.isInteracting = false
+                            state.onInteractionEnd()
                         }
                     }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { pos ->
-                                val currentScale = state.scaleAnim.value
-                                val currentOffset =
-                                    Offset(state.offsetXAnim.value, state.offsetYAnim.value)
-                                val sCropRect = state.cropRect.toScreen(currentScale, currentOffset)
-                                val handleHit = getHitHandle(pos, sCropRect, minTouchSize)
-                                if (handleHit != null) {
-                                    state.draggingHandle = handleHit
-                                    state.dragStartOffset = pos
-                                    state.initialCropRect = state.cropRect
-                                } else if (sCropRect.contains(pos)) {
-                                    state.draggingHandle = Handle.Center
-                                    state.dragStartOffset = pos
-                                    state.initialCropRect = state.cropRect
-                                } else {
-                                    state.draggingHandle = null
-                                }
+                                state.onDragStart(pos, minTouchSize)
                             },
                             onDragEnd = {
-                                state.draggingHandle = null
                                 scope.launch {
-                                    state.centerCropRectOnScreen(centerMargin)
+                                    state.onDragFinished(centerMargin)
                                 }
                             },
                             onDragCancel = {
-                                state.draggingHandle = null
                                 scope.launch {
-                                    state.centerCropRectOnScreen(centerMargin)
+                                    state.onDragFinished(centerMargin)
                                 }
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                val handle = state.draggingHandle ?: return@detectDragGestures
-                                val currentScale = state.scaleAnim.value
-                                val totalDrag = change.position - state.dragStartOffset
-                                val totalDeltaImage = totalDrag / currentScale
-                                val r = state.initialCropRect
-
-                                when (handle) {
-                                    Handle.Center -> {
-                                        val newLeft = (r.left + totalDeltaImage.x)
-                                            .coerceIn(0f, state.imageSize.width - r.width)
-                                        val newTop = (r.top + totalDeltaImage.y)
-                                            .coerceIn(0f, state.imageSize.height - r.height)
-                                        state.cropRect = Rect(Offset(newLeft, newTop), r.size)
-                                    }
-
-                                    else -> {
-                                        var left = r.left
-                                        var top = r.top
-                                        var right = r.right
-                                        var bottom = r.bottom
-                                        if (handle.isLeft) left += totalDeltaImage.x
-                                        if (handle.isRight) right += totalDeltaImage.x
-                                        if (handle.isTop) top += totalDeltaImage.y
-                                        if (handle.isBottom) bottom += totalDeltaImage.y
-
-                                        if (right - left < minCropSize) {
-                                            if (handle.isLeft) left = right - minCropSize
-                                            else right = left + minCropSize
-                                        }
-                                        if (bottom - top < minCropSize) {
-                                            if (handle.isTop) top = bottom - minCropSize
-                                            else bottom = top + minCropSize
-                                        }
-
-                                        left = left.coerceAtLeast(0f)
-                                        top = top.coerceAtLeast(0f)
-                                        right = right.coerceAtMost(state.imageSize.width)
-                                        bottom = bottom.coerceAtMost(state.imageSize.height)
-                                        state.cropRect = Rect(left, top, right, bottom)
-                                    }
-                                }
+                                state.onDrag(change.position, minCropSize)
                             }
                         )
                     }
@@ -349,7 +380,7 @@ fun ImageCropper(
                     )
 
                     // Grid
-                    if (state.isInteracting || state.draggingHandle != null) {
+                    if (state.showGrid) {
                         val gridStrokeWidth = 1.dp.toPx()
                         val gridColor = Color.White.copy(alpha = 0.7f)
                         for (i in 1..2) {
