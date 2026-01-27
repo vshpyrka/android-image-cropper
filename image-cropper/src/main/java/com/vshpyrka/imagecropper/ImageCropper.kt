@@ -165,16 +165,18 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         // Initialize crop rect to 80% of image size, centered, but enforce minimum size
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        
+
         // Calculate desired crop size (80% of image)
         val desiredWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
         val desiredHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
-        
+
         // Enforce minimum crop size (but don't exceed image dimensions)
         val minCropSize = ImageCropperDefaults.BaseMinCropSize // 100 pixels minimum
-        val rectWidth = desiredWidth.coerceAtLeast(minCropSize).coerceAtMost(imageWidth)
-        val rectHeight = desiredHeight.coerceAtLeast(minCropSize).coerceAtMost(imageHeight)
-        
+        val rectWidth = desiredWidth.coerceAtLeast(minCropSize)
+            .coerceAtMost(imageWidth)
+        val rectHeight = desiredHeight.coerceAtLeast(minCropSize)
+            .coerceAtMost(imageHeight)
+
         cropRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -223,7 +225,8 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         val width = currentRect.width.toInt().coerceIn(1, androidBitmap.width - left)
         val height = currentRect.height.toInt().coerceIn(1, androidBitmap.height - top)
 
-        return Bitmap.createBitmap(androidBitmap, left, top, width, height).asImageBitmap()
+        return Bitmap.createBitmap(androidBitmap, left, top, width, height)
+            .asImageBitmap()
     }
 
     /**
@@ -233,16 +236,18 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         if (parentSize == Size.Zero) return
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        
+
         // Calculate desired crop size (80% of image)
         val desiredWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
         val desiredHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
-        
+
         // Enforce minimum crop size (but don't exceed image dimensions)
         val minCropSize = ImageCropperDefaults.BaseMinCropSize // 100 pixels minimum
-        val rectWidth = desiredWidth.coerceAtLeast(minCropSize).coerceAtMost(imageWidth)
-        val rectHeight = desiredHeight.coerceAtLeast(minCropSize).coerceAtMost(imageHeight)
-        
+        val rectWidth = desiredWidth.coerceAtLeast(minCropSize)
+            .coerceAtMost(imageWidth)
+        val rectHeight = desiredHeight.coerceAtLeast(minCropSize)
+            .coerceAtMost(imageHeight)
+
         val targetRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -320,7 +325,11 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
      */
     private suspend fun animateCropRectTo(targetRect: Rect) {
         val startRect = cropRect
-        animate(0f, 1f, animationSpec = tween(ANIMATION_DURATION_MS)) { value, _ ->
+        animate(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = tween(ANIMATION_DURATION_MS)
+        ) { value, _ ->
             cropRect = Rect(
                 left = startRect.left + (targetRect.left - startRect.left) * value,
                 top = startRect.top + (targetRect.top - startRect.top) * value,
@@ -377,9 +386,9 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         val screenCropRect =
             cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
         if (getHitHandle(
-                position,
-                screenCropRect,
-                minTouchSize
+                touchPosition = position,
+                cropRect = screenCropRect,
+                touchRadius = minTouchSize,
             ) != null || screenCropRect.contains(position)
         ) {
             isInteracting = true
@@ -399,7 +408,11 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     internal fun onDragStart(position: Offset, minTouchSize: Float) {
         val screenCropRect =
             cropRect.toScreen(scaleAnim.value, Offset(offsetXAnim.value, offsetYAnim.value))
-        val handleHit = getHitHandle(position, screenCropRect, minTouchSize)
+        val handleHit = getHitHandle(
+            touchPosition = position,
+            cropRect = screenCropRect,
+            touchRadius = minTouchSize,
+        )
         if (handleHit != null) {
             draggingHandle = handleHit
             dragStartOffset = position
