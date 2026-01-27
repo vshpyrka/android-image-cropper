@@ -413,6 +413,46 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     }
 
     /**
+     * Determines which handle (if any) is located at the given touch position.
+     *
+     * @param touchPosition The touch position in screen coordinates.
+     * @param cropRect The crop rectangle in screen coordinates.
+     * @param touchRadius The radius around each handle to consider a hit.
+     * @return The [Handle] hit, or null if none.
+     */
+    private fun getHitHandle(touchPosition: Offset, cropRect: Rect, touchRadius: Float): Handle? {
+        fun hit(target: Offset) = (target - touchPosition).getDistance() <= touchRadius
+
+        if (hit(cropRect.topLeft)) return Handle.TopLeft
+        if (hit(cropRect.topRight)) return Handle.TopRight
+        if (hit(cropRect.bottomLeft)) return Handle.BottomLeft
+        if (hit(cropRect.bottomRight)) return Handle.BottomRight
+
+        if (hit(cropRect.topCenter)) return Handle.Top
+        if (hit(cropRect.bottomCenter)) return Handle.Bottom
+        if (hit(cropRect.centerLeft)) return Handle.Left
+        if (hit(cropRect.centerRight)) return Handle.Right
+
+        return null
+    }
+
+    /**
+     * Extension function to map a [Rect] from image coordinates to screen coordinates.
+     *
+     * @param scale The current zoom scale.
+     * @param offset The current panning offset.
+     * @return A [Rect] in screen coordinates.
+     */
+    internal fun Rect.toScreen(scale: Float, offset: Offset): Rect {
+        return Rect(
+            left = left * scale + offset.x,
+            top = top * scale + offset.y,
+            right = right * scale + offset.x,
+            bottom = bottom * scale + offset.y
+        )
+    }
+
+    /**
      * Handles the drag or resize operation.
      *
      * @param changePosition The current touch position on screen.
@@ -621,7 +661,7 @@ public fun ImageCropper(
                         )
                     }
             ) {
-                val screenCropRect = state.cropRect.toScreen(scale, offset)
+                val screenCropRect = with(state) { state.cropRect.toScreen(scale, offset) }
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     withTransform(
                         transformBlock = {
@@ -810,88 +850,4 @@ private fun DrawScope.drawHandle(
         radius = radius,
         center = center
     )
-}
-
-/**
- * Extension function to map a [Rect] from image coordinates to screen coordinates.
- *
- * @param scale The current zoom scale.
- * @param offset The current panning offset.
- * @return A [Rect] in screen coordinates.
- */
-private fun Rect.toScreen(scale: Float, offset: Offset): Rect {
-    return Rect(
-        left = left * scale + offset.x,
-        top = top * scale + offset.y,
-        right = right * scale + offset.x,
-        bottom = bottom * scale + offset.y
-    )
-}
-
-/**
- * Represents the different parts of the crop rectangle that can be interacted with.
- */
-internal enum class Handle {
-    /** Top-left corner handle. */
-    TopLeft,
-
-    /** Top-right corner handle. */
-    TopRight,
-
-    /** Bottom-left corner handle. */
-    BottomLeft,
-
-    /** Bottom-right corner handle. */
-    BottomRight,
-
-    /** Top-side handle. */
-    Top,
-
-    /** Bottom-side handle. */
-    Bottom,
-
-    /** Left-side handle. */
-    Left,
-
-    /** Right-side handle. */
-    Right,
-
-    /** Center handle for dragging the entire rectangle. */
-    Center;
-
-    /** Returns true if this handle involves the left edge. */
-    val isLeft get() = this == TopLeft || this == BottomLeft || this == Left
-
-    /** Returns true if this handle involves the right edge. */
-    val isRight get() = this == TopRight || this == BottomRight || this == Right
-
-    /** Returns true if this handle involves the top edge. */
-    val isTop get() = this == TopLeft || this == TopRight || this == Top
-
-    /** Returns true if this handle involves the bottom edge. */
-    val isBottom get() = this == BottomLeft || this == BottomRight || this == Bottom
-}
-
-/**
- * Determines which handle (if any) is located at the given touch position.
- *
- * @param touchPosition The touch position in screen coordinates.
- * @param cropRect The crop rectangle in screen coordinates.
- * @param touchRadius The radius around each handle to consider a hit.
- * @return The [Handle] hit, or null if none.
- */
-private fun getHitHandle(touchPosition: Offset, cropRect: Rect, touchRadius: Float): Handle? {
-    fun hit(target: Offset) = (target - touchPosition).getDistance() <= touchRadius
-
-    if (hit(cropRect.topLeft)) return Handle.TopLeft
-    if (hit(cropRect.topRight)) return Handle.TopRight
-    if (hit(cropRect.bottomLeft)) return Handle.BottomLeft
-    if (hit(cropRect.bottomRight)) return Handle.BottomRight
-
-    if (hit(cropRect.topCenter)) return Handle.Top
-    if (hit(cropRect.bottomCenter)) return Handle.Bottom
-    if (hit(cropRect.centerLeft)) return Handle.Left
-    if (hit(cropRect.centerRight)) return Handle.Right
-
-    return null
 }
