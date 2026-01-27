@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.Dp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -414,10 +415,17 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
 
     /**
      * Handles the drag or resize operation.
+     *
+     * @param changePosition The current touch position on screen.
+     * @param baseMinCropPx The base minimum crop size in pixels.
      */
-    internal fun onDrag(changePosition: Offset, baseMinCropPx: Float) {
+    internal suspend fun onDrag(
+        changePosition: Offset,
+        baseMinCropPx: Float,
+    ) {
         val handle = draggingHandle ?: return
-        val totalDeltaImage = (changePosition - dragStartOffset) / scaleAnim.value
+        val scale = scaleAnim.value
+        val totalDeltaImage = (changePosition - dragStartOffset) / scale
         val rectBeforeDrag = initialCropRect
 
         // Minimum crop size should not exceed image dimensions
@@ -457,6 +465,61 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
                 right = right.coerceAtMost(imageSize.width)
                 bottom = bottom.coerceAtMost(imageSize.height)
                 cropRect = Rect(left, top, right, bottom)
+            }
+        }
+        applyAutoPanning(scale)
+    }
+
+    /**
+     * Shifts the viewport if the crop rectangle moves outside the screen bounds,
+     * ensuring the crop rectangle remains visible while respecting image boundaries.
+     *
+     * @param scale The current zoom scale.
+     */
+    private suspend fun applyAutoPanning(scale: Float) {
+        if (parentSize == Size.Zero) return
+
+        val currentOffset = Offset(offsetXAnim.value, offsetYAnim.value)
+        val screenCropRect = cropRect.toScreen(scale, currentOffset)
+
+        var panX = 0f
+        var panY = 0f
+
+        // Pan left if rect exceeds screen right edge
+        if (screenCropRect.right > parentSize.width) {
+            panX = parentSize.width - screenCropRect.right
+            // Don't pan past image right edge
+            val imageScreenRight = currentOffset.x + (imageSize.width * scale)
+            panX = panX.coerceAtLeast(parentSize.width - imageScreenRight)
+        }
+        // Pan right if rect exceeds screen left edge
+        else if (screenCropRect.left < 0f) {
+            panX = -screenCropRect.left
+            // Don't pan past image left edge
+            panX = panX.coerceAtMost(-currentOffset.x)
+        }
+
+        // Pan up if rect exceeds screen bottom edge
+        if (screenCropRect.bottom > parentSize.height) {
+            panY = parentSize.height - screenCropRect.bottom
+            // Don't pan past image bottom edge
+            val imageScreenBottom = currentOffset.y + (imageSize.height * scale)
+            panY = panY.coerceAtLeast(parentSize.height - imageScreenBottom)
+        }
+        // Pan down if rect exceeds screen top edge
+        else if (screenCropRect.top < 0f) {
+            panY = -screenCropRect.top
+            // Don't pan past image top edge
+            panY = panY.coerceAtMost(-currentOffset.y)
+        }
+
+        if (panX != 0f || panY != 0f) {
+            // Adjust dragStartOffset so that future onDrag calls maintain the same image coordinates
+            // while the viewport moves under the touch point.
+            dragStartOffset += Offset(panX, panY)
+            coroutineScope {
+                offsetXAnim.snapTo(offsetXAnim.value + panX)
+                offsetYAnim.snapTo(offsetYAnim.value + panY)
             }
         }
     }
@@ -549,7 +612,12 @@ public fun ImageCropper(
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                state.onDrag(change.position, baseMinCropSizePx)
+                                scope.launch {
+                                    state.onDrag(
+                                        changePosition = change.position,
+                                        baseMinCropPx = baseMinCropSizePx,
+                                    )
+                                }
                             }
                         )
                     }
