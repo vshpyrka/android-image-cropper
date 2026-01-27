@@ -40,34 +40,125 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.unit.Dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-/** The default size of the crop rectangle relative to the image size. */
-private const val DEFAULT_CROP_RECT_PERCENTAGE = 0.8f
 /** The duration of the centering and fitting animations in milliseconds. */
 private const val ANIMATION_DURATION_MS = 300
-/** The opacity of the dark overlay surrounding the crop rectangle. */
-private const val OVERLAY_ALPHA = 0.5f
-/** The opacity of the grid lines inside the crop rectangle. */
-private const val GRID_ALPHA = 0.7f
 
-/** The minimum diameter for a touch target to ensure it is easily interactable. */
-private val MIN_TOUCH_TARGET_SIZE = 48.dp
-/** The base minimum dimension for the crop rectangle. */
-private val BASE_MIN_CROP_SIZE = 48.dp
-/** The margin maintained between the crop rectangle and the screen edge when centering. */
-private val CENTER_MARGIN = 20.dp
-/** The visual radius of the corner and side handles. */
-private val HANDLE_RADIUS = 10.dp
-/** The size of the invisible touch-target box for each handle. */
-private val HANDLE_INTERACTION_SIZE = 48.dp
-/** The thickness of the main crop rectangle border. */
-private val BORDER_STROKE_WIDTH = 2.dp
-/** The thickness of the grid lines. */
-private val GRID_STROKE_WIDTH = 1.dp
+private object ImageCropperTokens {
+    const val DefaultCropRectPercentage = 0.8f
+
+    // Sizes
+    val BorderWidth = 2.dp
+    val GridStrokeWidth = 1.dp
+    val HandleRadius = 10.dp
+    val MinTouchTargetSize = 48.dp
+    val BaseMinCropSize = 48.dp
+    val CenterMargin = 20.dp
+    val HandleInteractionSize = 48.dp
+
+    // Colors
+    val OverlayColor = Color.Black.copy(alpha = 0.5f)
+    val BorderColor = Color.White
+    val HandleColor = Color.White
+    val GridColor = Color.White.copy(alpha = 0.7f)
+}
+
+/**
+ * Object to hold defaults used by [ImageCropper]
+ */
+@Stable
+public object ImageCropperDefaults {
+
+    /**
+     * Default size for crop rect border width
+     */
+    public val BorderWidth: Dp = ImageCropperTokens.BorderWidth
+
+    /**
+     * Default size for crop rect guideline width
+     */
+    public val GuidelineWidth: Dp = ImageCropperTokens.GridStrokeWidth
+
+    /**
+     * Default size for crop handle radius
+     */
+    public val HandleRadius: Dp = ImageCropperTokens.HandleRadius
+
+    /**
+     * Creates a [ImageCropperColors] that represents the different colors used in parts of the [ImageCropper].
+     */
+    @Composable
+    public fun colors(
+        overlayColor: Color = Color.Unspecified,
+        borderColor: Color = Color.Unspecified,
+        handleColor: Color = Color.Unspecified,
+        gridColor: Color = Color.Unspecified,
+    ): ImageCropperColors = defaultColors.copy(
+        overlayColor = overlayColor,
+        borderColor = borderColor,
+        handleColor = handleColor,
+        gridColor = gridColor,
+    )
+
+    private val defaultColors: ImageCropperColors = ImageCropperColors(
+        overlayColor = ImageCropperTokens.OverlayColor,
+        borderColor = ImageCropperTokens.BorderColor,
+        handleColor = ImageCropperTokens.HandleColor,
+        gridColor = ImageCropperTokens.GridColor,
+    )
+}
+
+/**
+ * Represents the color used by a Crop.
+ */
+@Immutable
+public class ImageCropperColors(
+    public val overlayColor: Color,
+    public val borderColor: Color,
+    public val handleColor: Color,
+    public val gridColor: Color,
+) {
+    public fun copy(
+        overlayColor: Color = this.overlayColor,
+        borderColor: Color = this.borderColor,
+        handleColor: Color = this.handleColor,
+        gridColor: Color = this.gridColor,
+    ): ImageCropperColors = ImageCropperColors(
+        overlayColor.takeOrElse { this.overlayColor },
+        borderColor.takeOrElse { this.borderColor },
+        handleColor.takeOrElse { this.handleColor },
+        gridColor.takeOrElse { this.gridColor },
+    )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ImageCropperColors
+
+        if (overlayColor != other.overlayColor) return false
+        if (borderColor != other.borderColor) return false
+        if (handleColor != other.handleColor) return false
+        if (gridColor != other.gridColor) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = overlayColor.hashCode()
+        result = 31 * result + borderColor.hashCode()
+        result = 31 * result + handleColor.hashCode()
+        result = 31 * result + gridColor.hashCode()
+        return result
+    }
+}
 
 /**
  * A state object that can be hoisted to control and observe the image cropping state.
@@ -91,8 +182,8 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         // Initialize crop rect to 80% of image size, centered
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * DEFAULT_CROP_RECT_PERCENTAGE
-        val rectHeight = imageHeight * DEFAULT_CROP_RECT_PERCENTAGE
+        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
+        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
         cropRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -211,8 +302,8 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         if (parentSize == Size.Zero) return
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * DEFAULT_CROP_RECT_PERCENTAGE
-        val rectHeight = imageHeight * DEFAULT_CROP_RECT_PERCENTAGE
+        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
+        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
         val targetRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -410,11 +501,12 @@ fun ImageCropper(
     imageBitmap: ImageBitmap,
     modifier: Modifier = Modifier,
     state: ImageCropperState = rememberImageCropperState(imageBitmap),
+    colors: ImageCropperColors = ImageCropperDefaults.colors(),
 ) {
     val density = LocalDensity.current
-    val minTouchSizePx = with(density) { MIN_TOUCH_TARGET_SIZE.toPx() }
-    val baseMinCropSizePx = with(density) { BASE_MIN_CROP_SIZE.toPx() }
-    val centerMarginPx = with(density) { CENTER_MARGIN.toPx() }
+    val minTouchSizePx = with(density) { ImageCropperTokens.MinTouchTargetSize.toPx() }
+    val baseMinCropSizePx = with(density) { ImageCropperTokens.BaseMinCropSize.toPx() }
+    val centerMarginPx = with(density) { ImageCropperTokens.CenterMargin.toPx() }
 
     Box(
         modifier = modifier
@@ -480,51 +572,49 @@ fun ImageCropper(
                     )
 
                     // Overlay
-                    val overlayColor = Color.Black.copy(alpha = OVERLAY_ALPHA)
                     drawRect(
-                        color = overlayColor,
+                        color = colors.overlayColor,
                         topLeft = Offset.Zero,
                         size = Size(size.width, screenCropRect.top)
                     )
                     drawRect(
-                        color = overlayColor,
+                        color = colors.overlayColor,
                         topLeft = Offset(0f, screenCropRect.bottom),
                         size = Size(size.width, size.height - screenCropRect.bottom)
                     )
                     drawRect(
-                        color = overlayColor,
+                        color = colors.overlayColor,
                         topLeft = Offset(0f, screenCropRect.top),
                         size = Size(screenCropRect.left, screenCropRect.height)
                     )
                     drawRect(
-                        color = overlayColor,
+                        color = colors.overlayColor,
                         topLeft = Offset(screenCropRect.right, screenCropRect.top),
                         size = Size(size.width - screenCropRect.right, screenCropRect.height)
                     )
 
                     // Border
                     drawRect(
-                        color = Color.White,
+                        color = colors.borderColor,
                         topLeft = screenCropRect.topLeft,
                         size = screenCropRect.size,
-                        style = Stroke(width = BORDER_STROKE_WIDTH.toPx())
+                        style = Stroke(width = ImageCropperDefaults.BorderWidth.toPx())
                     )
 
                     // Grid
                     if (state.showGrid) {
-                        val gridStrokeWidthPx = GRID_STROKE_WIDTH.toPx()
-                        val gridColor = Color.White.copy(alpha = GRID_ALPHA)
+                        val gridStrokeWidthPx = ImageCropperDefaults.GuidelineWidth.toPx()
                         for (i in 1..2) {
                             val gridX = screenCropRect.left + screenCropRect.width * i / 3f
                             drawLine(
-                                color = gridColor,
+                                color = colors.gridColor,
                                 start = Offset(gridX, screenCropRect.top),
                                 end = Offset(gridX, screenCropRect.bottom),
                                 strokeWidth = gridStrokeWidthPx
                             )
                             val gridY = screenCropRect.top + screenCropRect.height * i / 3f
                             drawLine(
-                                color = gridColor,
+                                color = colors.gridColor,
                                 start = Offset(screenCropRect.left, gridY),
                                 end = Offset(screenCropRect.right, gridY),
                                 strokeWidth = gridStrokeWidthPx
@@ -533,15 +623,15 @@ fun ImageCropper(
                     }
 
                     // Handles
-                    val handleRadiusPx = HANDLE_RADIUS.toPx()
-                    drawHandle(screenCropRect.topLeft, handleRadiusPx)
-                    drawHandle(screenCropRect.topRight, handleRadiusPx)
-                    drawHandle(screenCropRect.bottomLeft, handleRadiusPx)
-                    drawHandle(screenCropRect.bottomRight, handleRadiusPx)
-                    drawHandle(screenCropRect.topCenter, handleRadiusPx)
-                    drawHandle(screenCropRect.bottomCenter, handleRadiusPx)
-                    drawHandle(screenCropRect.centerLeft, handleRadiusPx)
-                    drawHandle(screenCropRect.centerRight, handleRadiusPx)
+                    val handleRadiusPx = ImageCropperDefaults.HandleRadius.toPx()
+                    drawHandle(screenCropRect.topLeft, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.topRight, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.bottomLeft, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.bottomRight, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.topCenter, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.bottomCenter, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.centerLeft, handleRadiusPx, colors.handleColor)
+                    drawHandle(screenCropRect.centerRight, handleRadiusPx, colors.handleColor)
                 }
 
                 HandleBox(Handle.TopLeft, screenCropRect.topLeft)
@@ -600,11 +690,11 @@ private fun HandleBox(
 ) {
     Box(
         modifier = Modifier
-            .size(HANDLE_INTERACTION_SIZE)
+            .size(ImageCropperTokens.HandleInteractionSize)
             .offset {
                 IntOffset(
-                    (position.x - (HANDLE_INTERACTION_SIZE / 2).toPx()).roundToInt(),
-                    (position.y - (HANDLE_INTERACTION_SIZE / 2).toPx()).roundToInt()
+                    (position.x - (ImageCropperTokens.HandleInteractionSize / 2).toPx()).roundToInt(),
+                    (position.y - (ImageCropperTokens.HandleInteractionSize / 2).toPx()).roundToInt()
                 )
             }
             .then(
@@ -622,10 +712,11 @@ private fun HandleBox(
  */
 private fun DrawScope.drawHandle(
     center: Offset,
-    radius: Float
+    radius: Float,
+    color: Color,
 ) {
     drawCircle(
-        color = Color.White,
+        color = color,
         radius = radius,
         center = center
     )
