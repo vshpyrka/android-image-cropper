@@ -2,6 +2,7 @@ package com.vshpyrka.imagecropper
 
 import android.graphics.Bitmap
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -160,8 +161,10 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
     /**
      * Fits the entire image within the current screen boundaries by updating
      * the scale and offset.
+     *
+     * @param animate Whether to animate the transition or snap immediately.
      */
-    suspend fun fitImageToScreen() {
+    suspend fun fitImageToScreen(animate: Boolean = false) {
         if (parentSize == Size.Zero) return
         val screenWidth = parentSize.width
         val screenHeight = parentSize.height
@@ -174,9 +177,69 @@ class ImageCropperState(val imageBitmap: ImageBitmap) {
         val offsetX = (screenWidth - scaledWidth) / 2
         val offsetY = (screenHeight - scaledHeight) / 2
         coroutineScope {
-            scaleAnim.snapTo(scale)
-            offsetXAnim.snapTo(offsetX)
-            offsetYAnim.snapTo(offsetY)
+            if (animate) {
+                launch {
+                    scaleAnim.animateTo(
+                        scale,
+                        animationSpec = tween(ANIMATION_DURATION_MS)
+                    )
+                }
+                launch {
+                    offsetXAnim.animateTo(
+                        offsetX,
+                        animationSpec = tween(ANIMATION_DURATION_MS)
+                    )
+                }
+                launch {
+                    offsetYAnim.animateTo(
+                        offsetY,
+                        animationSpec = tween(ANIMATION_DURATION_MS)
+                    )
+                }
+            } else {
+                scaleAnim.snapTo(scale)
+                offsetXAnim.snapTo(offsetX)
+                offsetYAnim.snapTo(offsetY)
+            }
+        }
+    }
+
+    /**
+     * Resets the crop rectangle and viewport animations to their initial states.
+     */
+    suspend fun reset() {
+        if (parentSize == Size.Zero) return
+        val imageWidth = imageBitmap.width.toFloat()
+        val imageHeight = imageBitmap.height.toFloat()
+        val rectWidth = imageWidth * DEFAULT_CROP_RECT_PERCENTAGE
+        val rectHeight = imageHeight * DEFAULT_CROP_RECT_PERCENTAGE
+        val targetRect = Rect(
+            offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
+            size = Size(rectWidth, rectHeight)
+        )
+
+        coroutineScope {
+            launch {
+                animateCropRectTo(targetRect)
+            }
+            launch {
+                fitImageToScreen(animate = true)
+            }
+        }
+    }
+
+    /**
+     * Animates the crop rectangle to the given [targetRect].
+     */
+    private suspend fun animateCropRectTo(targetRect: Rect) {
+        val startRect = cropRect
+        animate(0f, 1f, animationSpec = tween(ANIMATION_DURATION_MS)) { value, _ ->
+            cropRect = Rect(
+                left = startRect.left + (targetRect.left - startRect.left) * value,
+                top = startRect.top + (targetRect.top - startRect.top) * value,
+                right = startRect.right + (targetRect.right - startRect.right) * value,
+                bottom = startRect.bottom + (targetRect.bottom - startRect.bottom) * value
+            )
         }
     }
 

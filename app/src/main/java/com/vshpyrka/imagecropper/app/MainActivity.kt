@@ -42,6 +42,7 @@ import androidx.core.content.FileProvider
 import com.vshpyrka.imagecropper.BitmapLoader
 import com.vshpyrka.imagecropper.ImageCropper
 import com.vshpyrka.imagecropper.rememberImageCropperState
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -103,7 +104,11 @@ fun ImageCropperApp() {
     }
 
     Scaffold { paddingVals ->
-        Box(modifier = Modifier.padding(paddingVals).fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .padding(paddingVals)
+                .fillMaxSize()
+        ) {
             when {
                 state.croppedBitmap != null -> {
                     ResultScreen(
@@ -111,6 +116,7 @@ fun ImageCropperApp() {
                         onReset = { state.reset() }
                     )
                 }
+
                 state.imageBitmap != null -> {
                     CroppingScreen(
                         imageBitmap = state.imageBitmap!!.asImageBitmap(),
@@ -120,6 +126,7 @@ fun ImageCropperApp() {
                         onCancel = { state.reset() }
                     )
                 }
+
                 else -> {
                     SelectionScreen(
                         isLoading = state.isLoading,
@@ -128,7 +135,11 @@ fun ImageCropperApp() {
                         },
                         onCameraClick = {
                             val file = createImageFile(context)
-                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+                            val uri = FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.provider",
+                                file
+                            )
                             tempCameraUri = uri
                             takePicture.launch(uri)
                         },
@@ -173,7 +184,10 @@ private fun SelectionScreen(
             CircularProgressIndicator()
         } else {
             Text("Select an image to start", style = MaterialTheme.typography.headlineMedium)
-            Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(onClick = onGalleryClick) {
                     Icon(Icons.Default.Image, null)
                     Text("Gallery", modifier = Modifier.padding(start = 4.dp))
@@ -198,16 +212,26 @@ private fun CroppingScreen(
     onCancel: () -> Unit
 ) {
     val cropperState = rememberImageCropperState(imageBitmap)
+    val scope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             ImageCropper(imageBitmap = imageBitmap, state = cropperState)
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = onCancel) {
                 Text("Cancel")
+            }
+            Button(
+                onClick = {
+                    scope.launch { cropperState.reset() }
+                }
+            ) {
+                Text("Reset")
             }
             Button(onClick = {
                 onCrop(cropperState.crop().asAndroidBitmap())
@@ -225,12 +249,18 @@ private fun ResultScreen(
     onReset: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text("Cropped Result", style = MaterialTheme.typography.headlineMedium)
-        Box(modifier = Modifier.weight(1f).padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp)
+        ) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = null,
