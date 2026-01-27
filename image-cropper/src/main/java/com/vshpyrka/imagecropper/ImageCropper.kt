@@ -13,7 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -28,10 +35,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.withSave
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.roundToInt
-import androidx.core.graphics.withSave
 
 /**
  * A state object that can be hoisted to control and observe the image cropping state.
@@ -42,23 +50,45 @@ import androidx.core.graphics.withSave
 class ImageCropperState(
     bitmap: Bitmap
 ) {
-    /**
-     * The size of the original image being cropped.
-     */
+    /** The size of the original image being cropped. */
     var imageSize by mutableStateOf(
         Size(bitmap.width.toFloat(), bitmap.height.toFloat())
     )
         internal set
 
-    /**
-     * The current crop rectangle in image coordinates.
-     */
+    /** The current crop rectangle in image coordinates. */
     var cropRect by mutableStateOf(
         Rect(
             offset = Offset(bitmap.width * 0.1f, bitmap.height * 0.1f),
             size = Size(bitmap.width * 0.8f, bitmap.height * 0.8f)
         )
     )
+        internal set
+
+    // Animation states
+    internal val scaleAnim = Animatable(1f)
+    internal val offsetXAnim = Animatable(0f)
+    internal val offsetYAnim = Animatable(0f)
+
+    /** Whether the initial view (fitting image to screen) has been performed. */
+    var initialized by mutableStateOf(false)
+        internal set
+
+    /** The size of the parent container in pixels. */
+    var parentSize by mutableStateOf(Size.Zero)
+        internal set
+
+    /** The current handle being dragged, or null if no interaction is occurring. */
+    internal var draggingHandle by mutableStateOf<Handle?>(null)
+
+    /** The initial touch position when a drag started. */
+    internal var dragStartOffset by mutableStateOf(Offset.Zero)
+
+    /** The crop rectangle's value when a drag/resize operation started. */
+    internal var initialCropRect by mutableStateOf(Rect.Zero)
+
+    /** Whether the user is currently interacting with the crop rectangle. */
+    var isInteracting by mutableStateOf(false)
         internal set
 
     /**
@@ -75,6 +105,54 @@ class ImageCropperState(
         val height = r.height.toInt().coerceIn(1, bitmap.height - top)
 
         return Bitmap.createBitmap(bitmap, left, top, width, height)
+    }
+
+    /**
+     * Fits the entire image within the current screen boundaries by updating
+     * the scale and offset.
+     */
+    suspend fun fitImageToScreen() {
+        if (parentSize == Size.Zero) return
+        val screenWidth = parentSize.width
+        val screenHeight = parentSize.height
+
+        val scaleX = screenWidth / imageSize.width
+        val scaleY = screenHeight / imageSize.height
+        val scale = min(scaleX, scaleY)
+        val w = imageSize.width * scale
+        val h = imageSize.height * scale
+        val x = (screenWidth - w) / 2
+        val y = (screenHeight - h) / 2
+        coroutineScope {
+            scaleAnim.snapTo(scale)
+            offsetXAnim.snapTo(x)
+            offsetYAnim.snapTo(y)
+        }
+    }
+
+    /**
+     * Centers the current crop rectangle on the screen, zooming in to make it
+     * as large as possible with a small margin.
+     */
+    suspend fun centerCropRectOnScreen(marginPx: Float) {
+        if (parentSize == Size.Zero) return
+        val screenWidth = parentSize.width
+        val screenHeight = parentSize.height
+
+        val availableW = screenWidth - marginPx * 2
+        val availableH = screenHeight - marginPx * 2
+        val scaleX = availableW / cropRect.width
+        val scaleY = availableH / cropRect.height
+        val scale = min(scaleX, scaleY)
+        val newW = cropRect.width * scale
+        val newH = cropRect.height * scale
+        val newX = (screenWidth - newW) / 2 - cropRect.left * scale
+        val newY = (screenHeight - newH) / 2 - cropRect.top * scale
+        coroutineScope {
+            launch { scaleAnim.animateTo(scale, animationSpec = tween(300)) }
+            launch { offsetXAnim.animateTo(newX, animationSpec = tween(300)) }
+            launch { offsetYAnim.animateTo(newY, animationSpec = tween(300)) }
+        }
     }
 }
 
@@ -96,8 +174,8 @@ fun rememberImageCropperState(bitmap: Bitmap): ImageCropperState {
  * and updates the view to keep the crop rectangle visible and centered when possible.
  *
  * @param bitmap The [Bitmap] to be cropped.
- * @param state The [ImageCropperState] to control and observe the cropping process.
  * @param modifier The [Modifier] to be applied to the layout.
+ * @param state The [ImageCropperState] to control and observe the cropping process.
  */
 @Composable
 fun ImageCropper(
@@ -108,82 +186,27 @@ fun ImageCropper(
     val density = LocalDensity.current
     val minTouchSize = with(density) { 48.dp.toPx() }
     val minCropSize = with(density) { 100.dp.toPx() }
-
-    var parentSize by remember { mutableStateOf(Size.Zero) }
+    val centerMargin = with(density) { 20.dp.toPx() }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .onSizeChanged {
-                parentSize = Size(it.width.toFloat(), it.height.toFloat())
+                state.parentSize = Size(it.width.toFloat(), it.height.toFloat())
             }
     ) {
-        if (parentSize != Size.Zero) {
-            val screenWidth = parentSize.width
-            val screenHeight = parentSize.height
-
-            val scaleAnim = remember { Animatable(1f) }
-            val offsetXAnim = remember { Animatable(0f) }
-            val offsetYAnim = remember { Animatable(0f) }
-            var initialized by remember(bitmap) { mutableStateOf(false) }
-
+        if (state.parentSize != Size.Zero) {
             val scope = rememberCoroutineScope()
 
-            /**
-             * Fits the entire image within the current screen boundaries by updating
-             * the scale and offset.
-             */
-            fun fitImageToScreen() {
-                val scaleX = screenWidth / state.imageSize.width
-                val scaleY = screenHeight / state.imageSize.height
-                val scale = min(scaleX, scaleY)
-                val w = state.imageSize.width * scale
-                val h = state.imageSize.height * scale
-                val x = (screenWidth - w) / 2
-                val y = (screenHeight - h) / 2
-                scope.launch {
-                    scaleAnim.snapTo(scale)
-                    offsetXAnim.snapTo(x)
-                    offsetYAnim.snapTo(y)
+            LaunchedEffect(bitmap, state.parentSize) {
+                if (!state.initialized && state.parentSize.width > 0 && state.parentSize.height > 0) {
+                    state.fitImageToScreen()
+                    state.initialized = true
                 }
             }
 
-            /**
-             * Centers the current crop rectangle on the screen, zooming in to make it
-             * as large as possible with a small margin.
-             */
-            fun centerCropRectOnScreen() {
-                val margin = with(density) { 20.dp.toPx() }
-                val availableW = screenWidth - margin * 2
-                val availableH = screenHeight - margin * 2
-                val scaleX = availableW / state.cropRect.width
-                val scaleY = availableH / state.cropRect.height
-                val scale = min(scaleX, scaleY)
-                val newW = state.cropRect.width * scale
-                val newH = state.cropRect.height * scale
-                val newX = (screenWidth - newW) / 2 - state.cropRect.left * scale
-                val newY = (screenHeight - newH) / 2 - state.cropRect.top * scale
-                scope.launch {
-                    launch { scaleAnim.animateTo(scale, animationSpec = tween(300)) }
-                    launch { offsetXAnim.animateTo(newX, animationSpec = tween(300)) }
-                    launch { offsetYAnim.animateTo(newY, animationSpec = tween(300)) }
-                }
-            }
-
-            LaunchedEffect(bitmap, screenWidth, screenHeight) {
-                if (!initialized && screenWidth > 0 && screenHeight > 0) {
-                    fitImageToScreen()
-                    initialized = true
-                }
-            }
-
-            var draggingHandle by remember { mutableStateOf<Handle?>(null) }
-            var dragStartOffset by remember { mutableStateOf(Offset.Zero) }
-            var initialCropRect by remember { mutableStateOf(Rect.Zero) }
-            var isInteracting by remember { mutableStateOf(false) }
-
-            val scale = scaleAnim.value
-            val offset = Offset(offsetXAnim.value, offsetYAnim.value)
+            val scale = state.scaleAnim.value
+            val offset = Offset(state.offsetXAnim.value, state.offsetYAnim.value)
 
             Box(
                 modifier = Modifier
@@ -191,53 +214,59 @@ fun ImageCropper(
                     .pointerInput(Unit) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
-                            val currentScale = scaleAnim.value
-                            val currentOffset = Offset(offsetXAnim.value, offsetYAnim.value)
+                            val currentScale = state.scaleAnim.value
+                            val currentOffset =
+                                Offset(state.offsetXAnim.value, state.offsetYAnim.value)
                             val sCropRect = state.cropRect.toScreen(currentScale, currentOffset)
 
                             if (getHitHandle(down.position, sCropRect, minTouchSize) != null ||
                                 sCropRect.contains(down.position)
                             ) {
-                                isInteracting = true
+                                state.isInteracting = true
                             }
                             waitForUpOrCancellation()
-                            isInteracting = false
+                            state.isInteracting = false
                         }
                     }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { pos ->
-                                val currentScale = scaleAnim.value
-                                val currentOffset = Offset(offsetXAnim.value, offsetYAnim.value)
+                                val currentScale = state.scaleAnim.value
+                                val currentOffset =
+                                    Offset(state.offsetXAnim.value, state.offsetYAnim.value)
                                 val sCropRect = state.cropRect.toScreen(currentScale, currentOffset)
                                 val handleHit = getHitHandle(pos, sCropRect, minTouchSize)
                                 if (handleHit != null) {
-                                    draggingHandle = handleHit
-                                    dragStartOffset = pos
-                                    initialCropRect = state.cropRect
+                                    state.draggingHandle = handleHit
+                                    state.dragStartOffset = pos
+                                    state.initialCropRect = state.cropRect
                                 } else if (sCropRect.contains(pos)) {
-                                    draggingHandle = Handle.Center
-                                    dragStartOffset = pos
-                                    initialCropRect = state.cropRect
+                                    state.draggingHandle = Handle.Center
+                                    state.dragStartOffset = pos
+                                    state.initialCropRect = state.cropRect
                                 } else {
-                                    draggingHandle = null
+                                    state.draggingHandle = null
                                 }
                             },
                             onDragEnd = {
-                                draggingHandle = null
-                                centerCropRectOnScreen()
+                                state.draggingHandle = null
+                                scope.launch {
+                                    state.centerCropRectOnScreen(centerMargin)
+                                }
                             },
                             onDragCancel = {
-                                draggingHandle = null
-                                centerCropRectOnScreen()
+                                state.draggingHandle = null
+                                scope.launch {
+                                    state.centerCropRectOnScreen(centerMargin)
+                                }
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                val handle = draggingHandle ?: return@detectDragGestures
-                                val currentScale = scaleAnim.value
-                                val totalDrag = change.position - dragStartOffset
+                                val handle = state.draggingHandle ?: return@detectDragGestures
+                                val currentScale = state.scaleAnim.value
+                                val totalDrag = change.position - state.dragStartOffset
                                 val totalDeltaImage = totalDrag / currentScale
-                                val r = initialCropRect
+                                val r = state.initialCropRect
 
                                 when (handle) {
                                     Handle.Center -> {
@@ -320,7 +349,7 @@ fun ImageCropper(
                     )
 
                     // Grid
-                    if (isInteracting || draggingHandle != null) {
+                    if (state.isInteracting || state.draggingHandle != null) {
                         val gridStrokeWidth = 1.dp.toPx()
                         val gridColor = Color.White.copy(alpha = 0.7f)
                         for (i in 1..2) {
@@ -461,23 +490,31 @@ private fun Rect.toScreen(scale: Float, offset: Offset): Rect {
 /**
  * Represents the different parts of the crop rectangle that can be interacted with.
  */
-private enum class Handle {
+internal enum class Handle {
     /** Top-left corner handle. */
     TopLeft,
+
     /** Top-right corner handle. */
     TopRight,
+
     /** Bottom-left corner handle. */
     BottomLeft,
+
     /** Bottom-right corner handle. */
     BottomRight,
+
     /** Top-side handle. */
     Top,
+
     /** Bottom-side handle. */
     Bottom,
+
     /** Left-side handle. */
     Left,
+
     /** Right-side handle. */
     Right,
+
     /** Center handle for dragging the entire rectangle. */
     Center;
 
