@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.Dp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -219,17 +218,6 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         get() = isInteracting || draggingHandle != null
 
     /**
-     * Initializes the image viewport (scale and offset) if it hasn't been done yet
-     * and the parent dimensions are available.
-     */
-    internal suspend fun initializeViewportIfNeeded() {
-        if (!initialized && parentSize.width > 0f && parentSize.height > 0f) {
-            fitImageToScreen()
-            initialized = true
-        }
-    }
-
-    /**
      * Crops the original [imageBitmap] using the current [cropRect].
      *
      * @return The cropped region as a new [ImageBitmap].
@@ -246,12 +234,47 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     }
 
     /**
+     * Resets the crop rectangle and viewport animations to their initial states.
+     */
+    public suspend fun reset() {
+        if (parentSize == Size.Zero) return
+        val imageWidth = imageBitmap.width.toFloat()
+        val imageHeight = imageBitmap.height.toFloat()
+        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
+        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
+        val targetRect = Rect(
+            offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
+            size = Size(rectWidth, rectHeight)
+        )
+
+        coroutineScope {
+            launch {
+                animateCropRectTo(targetRect)
+            }
+            launch {
+                fitImageToScreen(animate = true)
+            }
+        }
+    }
+
+    /**
+     * Initializes the image viewport (scale and offset) if it hasn't been done yet
+     * and the parent dimensions are available.
+     */
+    internal suspend fun initializeViewportIfNeeded() {
+        if (!initialized && parentSize.width > 0f && parentSize.height > 0f) {
+            fitImageToScreen()
+            initialized = true
+        }
+    }
+
+    /**
      * Fits the entire image within the current screen boundaries by updating
      * the scale and offset.
      *
      * @param animate Whether to animate the transition or snap immediately.
      */
-    public suspend fun fitImageToScreen(animate: Boolean = false) {
+    internal suspend fun fitImageToScreen(animate: Boolean = false) {
         if (parentSize == Size.Zero) return
         val screenWidth = parentSize.width
         val screenHeight = parentSize.height
@@ -292,30 +315,6 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     }
 
     /**
-     * Resets the crop rectangle and viewport animations to their initial states.
-     */
-    public suspend fun reset() {
-        if (parentSize == Size.Zero) return
-        val imageWidth = imageBitmap.width.toFloat()
-        val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
-        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
-        val targetRect = Rect(
-            offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
-            size = Size(rectWidth, rectHeight)
-        )
-
-        coroutineScope {
-            launch {
-                animateCropRectTo(targetRect)
-            }
-            launch {
-                fitImageToScreen(animate = true)
-            }
-        }
-    }
-
-    /**
      * Animates the crop rectangle to the given [targetRect].
      */
     private suspend fun animateCropRectTo(targetRect: Rect) {
@@ -334,7 +333,7 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
      * Centers the current crop rectangle on the screen, zooming in to make it
      * as large as possible with a small margin.
      */
-    public suspend fun centerCropRectOnScreen(marginPx: Float) {
+    internal suspend fun centerCropRectOnScreen(marginPx: Float) {
         if (parentSize == Size.Zero) return
         val screenWidth = parentSize.width
         val screenHeight = parentSize.height
