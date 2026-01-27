@@ -572,66 +572,18 @@ fun ImageCropper(
                     )
 
                     // Overlay
-                    drawRect(
-                        color = colors.overlayColor,
-                        topLeft = Offset.Zero,
-                        size = Size(size.width, screenCropRect.top)
-                    )
-                    drawRect(
-                        color = colors.overlayColor,
-                        topLeft = Offset(0f, screenCropRect.bottom),
-                        size = Size(size.width, size.height - screenCropRect.bottom)
-                    )
-                    drawRect(
-                        color = colors.overlayColor,
-                        topLeft = Offset(0f, screenCropRect.top),
-                        size = Size(screenCropRect.left, screenCropRect.height)
-                    )
-                    drawRect(
-                        color = colors.overlayColor,
-                        topLeft = Offset(screenCropRect.right, screenCropRect.top),
-                        size = Size(size.width - screenCropRect.right, screenCropRect.height)
-                    )
+                    drawOverlay(screenCropRect, colors.overlayColor)
 
                     // Border
-                    drawRect(
-                        color = colors.borderColor,
-                        topLeft = screenCropRect.topLeft,
-                        size = screenCropRect.size,
-                        style = Stroke(width = ImageCropperDefaults.BorderWidth.toPx())
-                    )
+                    drawBorder(screenCropRect, colors.borderColor)
 
                     // Grid
                     if (state.showGrid) {
-                        val gridStrokeWidthPx = ImageCropperDefaults.GuidelineWidth.toPx()
-                        for (i in 1..2) {
-                            val gridX = screenCropRect.left + screenCropRect.width * i / 3f
-                            drawLine(
-                                color = colors.gridColor,
-                                start = Offset(gridX, screenCropRect.top),
-                                end = Offset(gridX, screenCropRect.bottom),
-                                strokeWidth = gridStrokeWidthPx
-                            )
-                            val gridY = screenCropRect.top + screenCropRect.height * i / 3f
-                            drawLine(
-                                color = colors.gridColor,
-                                start = Offset(screenCropRect.left, gridY),
-                                end = Offset(screenCropRect.right, gridY),
-                                strokeWidth = gridStrokeWidthPx
-                            )
-                        }
+                        drawGrid(screenCropRect, colors.gridColor)
                     }
 
                     // Handles
-                    val handleRadiusPx = ImageCropperDefaults.HandleRadius.toPx()
-                    drawHandle(screenCropRect.topLeft, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.topRight, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.bottomLeft, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.bottomRight, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.topCenter, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.bottomCenter, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.centerLeft, handleRadiusPx, colors.handleColor)
-                    drawHandle(screenCropRect.centerRight, handleRadiusPx, colors.handleColor)
+                    drawHandles(screenCropRect, colors.handleColor)
                 }
 
                 HandleBox(Handle.TopLeft, screenCropRect.topLeft)
@@ -702,6 +654,82 @@ private fun HandleBox(
             )
             .testTag("Handle${handle.name}")
     )
+}
+
+/**
+ * Draws the dark overlay around the crop rectangle.
+ */
+private fun DrawScope.drawOverlay(rect: Rect, color: Color) {
+    drawRect(
+        color = color,
+        topLeft = Offset.Zero,
+        size = Size(size.width, rect.top)
+    )
+    drawRect(
+        color = color,
+        topLeft = Offset(0f, rect.bottom),
+        size = Size(size.width, size.height - rect.bottom)
+    )
+    drawRect(
+        color = color,
+        topLeft = Offset(0f, rect.top),
+        size = Size(rect.left, rect.height)
+    )
+    drawRect(
+        color = color,
+        topLeft = Offset(rect.right, rect.top),
+        size = Size(size.width - rect.right, rect.height)
+    )
+}
+
+/**
+ * Draws the border of the crop rectangle.
+ */
+private fun DrawScope.drawBorder(rect: Rect, color: Color) {
+    drawRect(
+        color = color,
+        topLeft = rect.topLeft,
+        size = rect.size,
+        style = Stroke(width = ImageCropperDefaults.BorderWidth.toPx())
+    )
+}
+
+/**
+ * Draws the 3x3 grid inside the crop rectangle.
+ */
+private fun DrawScope.drawGrid(rect: Rect, color: Color) {
+    val gridStrokeWidthPx = ImageCropperDefaults.GuidelineWidth.toPx()
+    for (i in 1..2) {
+        val gridX = rect.left + rect.width * i / 3f
+        drawLine(
+            color = color,
+            start = Offset(gridX, rect.top),
+            end = Offset(gridX, rect.bottom),
+            strokeWidth = gridStrokeWidthPx
+        )
+        val gridY = rect.top + rect.height * i / 3f
+        drawLine(
+            color = color,
+            start = Offset(rect.left, gridY),
+            end = Offset(rect.right, gridY),
+            strokeWidth = gridStrokeWidthPx
+        )
+    }
+}
+
+/**
+ * Draws all corner and side handles for the crop rectangle.
+ */
+private fun DrawScope.drawHandles(rect: Rect, color: Color) {
+    val handleRadiusPx = ImageCropperDefaults.HandleRadius.toPx()
+    drawHandle(rect.topLeft, handleRadiusPx, color)
+    drawHandle(rect.topRight, handleRadiusPx, color)
+    drawHandle(rect.bottomLeft, handleRadiusPx, color)
+    drawHandle(rect.bottomRight, handleRadiusPx, color)
+    drawHandle(rect.topCenter, handleRadiusPx, color)
+    drawHandle(rect.bottomCenter, handleRadiusPx, color)
+    drawHandle(rect.centerLeft, handleRadiusPx, color)
+    drawHandle(rect.centerRight, handleRadiusPx, color)
 }
 
 /**
