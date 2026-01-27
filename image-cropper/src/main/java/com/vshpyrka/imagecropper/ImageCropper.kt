@@ -169,14 +169,12 @@ public class ImageCropperColors(
 public class ImageCropperState(public val imageBitmap: ImageBitmap) {
 
     /** The size of the original image being cropped. */
-    public var imageSize: Size by mutableStateOf(
+    internal var imageSize: Size by mutableStateOf(
         Size(imageBitmap.width.toFloat(), imageBitmap.height.toFloat())
     )
-        internal set
 
     /** The current crop rectangle in image coordinates. */
-    public var cropRect: Rect by mutableStateOf(Rect.Zero)
-        internal set
+    internal var cropRect: Rect by mutableStateOf(Rect.Zero)
 
     init {
         // Initialize crop rect to 80% of image size, centered
@@ -196,12 +194,10 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     internal val offsetYAnim = Animatable(0f)
 
     /** Whether the initial view (fitting image to screen) has been performed. */
-    public var initialized: Boolean by mutableStateOf(false)
-        internal set
+    internal var initialized: Boolean by mutableStateOf(false)
 
     /** The size of the parent container in pixels. */
-    public var parentSize: Size by mutableStateOf(Size.Zero)
-        internal set
+    internal var parentSize: Size by mutableStateOf(Size.Zero)
 
     /** The current handle being dragged, or null if no interaction is occurring. */
     private var draggingHandle by mutableStateOf<Handle?>(null)
@@ -213,8 +209,7 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     private var initialCropRect by mutableStateOf(Rect.Zero)
 
     /** Whether the user is currently interacting with the crop rectangle. */
-    public var isInteracting: Boolean by mutableStateOf(false)
-        internal set
+    internal var isInteracting: Boolean by mutableStateOf(false)
 
     /**
      * Checks if a grid should be drawn.
