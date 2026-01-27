@@ -72,6 +72,11 @@ public object ImageCropperDefaults {
     public val HandleRadius: Dp = ImageCropperTokens.HandleRadius
 
     /**
+     * Default minimal crop side dimension
+     */
+    public const val BaseMinCropSize: Float = 100f
+
+    /**
      * Creates a [ImageCropperColors] that represents the different colors used in parts of the [ImageCropper].
      */
     @Composable
@@ -157,11 +162,19 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
     internal var cropRect: Rect by mutableStateOf(Rect.Zero)
 
     init {
-        // Initialize crop rect to 80% of image size, centered
+        // Initialize crop rect to 80% of image size, centered, but enforce minimum size
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
-        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
+        
+        // Calculate desired crop size (80% of image)
+        val desiredWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
+        val desiredHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
+        
+        // Enforce minimum crop size (but don't exceed image dimensions)
+        val minCropSize = ImageCropperDefaults.BaseMinCropSize // 100 pixels minimum
+        val rectWidth = desiredWidth.coerceAtLeast(minCropSize).coerceAtMost(imageWidth)
+        val rectHeight = desiredHeight.coerceAtLeast(minCropSize).coerceAtMost(imageHeight)
+        
         cropRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -220,8 +233,16 @@ public class ImageCropperState(public val imageBitmap: ImageBitmap) {
         if (parentSize == Size.Zero) return
         val imageWidth = imageBitmap.width.toFloat()
         val imageHeight = imageBitmap.height.toFloat()
-        val rectWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
-        val rectHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
+        
+        // Calculate desired crop size (80% of image)
+        val desiredWidth = imageWidth * ImageCropperTokens.DefaultCropRectPercentage
+        val desiredHeight = imageHeight * ImageCropperTokens.DefaultCropRectPercentage
+        
+        // Enforce minimum crop size (but don't exceed image dimensions)
+        val minCropSize = ImageCropperDefaults.BaseMinCropSize // 100 pixels minimum
+        val rectWidth = desiredWidth.coerceAtLeast(minCropSize).coerceAtMost(imageWidth)
+        val rectHeight = desiredHeight.coerceAtLeast(minCropSize).coerceAtMost(imageHeight)
+        
         val targetRect = Rect(
             offset = Offset((imageWidth - rectWidth) / 2f, (imageHeight - rectHeight) / 2f),
             size = Size(rectWidth, rectHeight)
@@ -582,8 +603,8 @@ public fun ImageCropper(
 ) {
     val density = LocalDensity.current
     val minTouchSizePx = with(density) { ImageCropperTokens.MinTouchTargetSize.toPx() }
-    val baseMinCropSizePx = with(density) { ImageCropperTokens.BaseMinCropSize.toPx() }
     val centerMarginPx = with(density) { ImageCropperTokens.CenterMargin.toPx() }
+    val baseMinCropSizePx = ImageCropperDefaults.BaseMinCropSize
 
     Box(
         modifier = modifier

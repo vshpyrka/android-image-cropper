@@ -14,7 +14,6 @@ internal object ImageCropperTokens {
     val GridStrokeWidth = 1.dp
     val HandleRadius = 10.dp
     val MinTouchTargetSize = 48.dp
-    val BaseMinCropSize = 48.dp
     val CenterMargin = 20.dp
     val HandleInteractionSize = 48.dp
 
