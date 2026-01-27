@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "com.vshpyrka.imagecropper.image-cropper-release-36:/layout/ime_base_split_test_activity.xml",
+        "source": "com.vshpyrka.imagecropper.image-cropper-core-1.16.0-6:/layout/ime_base_split_test_activity.xml"
+    },
+    {
+        "merged": "com.vshpyrka.imagecropper.image-cropper-release-36:/layout/ime_secondary_split_test_activity.xml",
+        "source": "com.vshpyrka.imagecropper.image-cropper-core-1.16.0-6:/layout/ime_secondary_split_test_activity.xml"
+    },
+    {
+        "merged": "com.vshpyrka.imagecropper.image-cropper-release-36:/layout/custom_dialog.xml",
+        "source": "com.vshpyrka.imagecropper.image-cropper-core-1.16.0-6:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "com.vshpyrka.imagecropper.image-cropper-release-36:/layout/notification_template_part_time.xml",
+        "source": "com.vshpyrka.imagecropper.image-cropper-core-1.16.0-6:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "com.vshpyrka.imagecropper.image-cropper-release-36:/layout/notification_template_part_chronometer.xml",
+        "source": "com.vshpyrka.imagecropper.image-cropper-core-1.16.0-6:/layout/notification_template_part_chronometer.xml"
+    }
+]

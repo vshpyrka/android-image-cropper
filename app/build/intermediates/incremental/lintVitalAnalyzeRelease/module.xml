@@ -1,0 +1,18 @@
+<lint-module
+    format="1"
+    dir="/Users/vshpyrka/AndroidStudioProjects/ImageCropper/app"
+    name=":app"
+    type="APP"
+    maven="ImageCropper:app:unspecified"
+    agpVersion="8.8.0"
+    buildFolder="build"
+    bootClassPath="/Users/vshpyrka/Library/Android/sdk/platforms/android-36/android.jar:/Users/vshpyrka/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-36">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

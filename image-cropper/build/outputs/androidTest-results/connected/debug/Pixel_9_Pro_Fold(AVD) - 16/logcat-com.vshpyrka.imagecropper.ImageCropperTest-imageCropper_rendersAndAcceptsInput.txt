@@ -1,0 +1,134 @@
+01-27 15:09:33.059 31133 31147 I TestRunner: started: imageCropper_rendersAndAcceptsInput(com.vshpyrka.imagecropper.ImageCropperTest)
+01-27 15:09:33.091 31133 31147 W FileTestStorage: Output properties is not supported.
+01-27 15:09:33.091 31133 31147 I Tracing : Tracer added: class androidx.test.platform.tracing.AndroidXTracer
+01-27 15:09:33.095 31133 31133 D EventInjectionStrategy: Creating injection strategy with input manager.
+01-27 15:09:33.095 31133 31133 I agecropper.test: hiddenapi: Accessing hidden method Landroid/hardware/input/InputManager;->getInstance()Landroid/hardware/input/InputManager; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/InputManagerEventInjectionStrategy; (domain=app) using reflection: allowed
+01-27 15:09:33.098 31133 31133 I agecropper.test: hiddenapi: Accessing hidden method Landroid/hardware/input/InputManager;->injectInputEvent(Landroid/view/InputEvent;I)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/InputManagerEventInjectionStrategy; (domain=app) using reflection: allowed
+01-27 15:09:33.098 31133 31133 I agecropper.test: hiddenapi: Accessing hidden field Landroid/hardware/input/InputManager;->INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH:I (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/InputManagerEventInjectionStrategy; (domain=app) using reflection: allowed
+01-27 15:09:33.139 31133 31133 I agecropper.test: hiddenapi: Accessing hidden method Landroid/os/MessageQueue;->next()Landroid/os/Message; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/Interrogator; (domain=app) using reflection: allowed
+01-27 15:09:33.139 31133 31133 I agecropper.test: hiddenapi: Accessing hidden field Landroid/os/MessageQueue;->mMessages:Landroid/os/Message; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/Interrogator; (domain=app) using reflection: allowed
+01-27 15:09:33.139 31133 31133 I agecropper.test: hiddenapi: Accessing hidden method Landroid/os/Message;->recycleUnchecked()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/test/espresso/base/Interrogator; (domain=app) using reflection: allowed
+01-27 15:09:33.140 31133 31147 D IdlingRegistry: Registering idling resources: [androidx.compose.ui.test.EspressoLink@a96ae7c]
+01-27 15:09:33.150 31133 31147 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+01-27 15:09:33.157 31133 31147 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+01-27 15:09:33.179   671  2732 I system_server: AssetManager2(0xb400007082e12f58) locale list changing from [] to [en-US]
+01-27 15:09:33.182   671  2732 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@1d3af2ce does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+01-27 15:09:33.198  1086  1234 I ndroid.systemui: AssetManager2(0xb400007082dbfc18) locale list changing from [] to [en-US]
+01-27 15:09:33.273   519   593 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:33.274   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:33.274   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:33.274   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:33.309   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:33.593  1086  1153 I ndroid.systemui: AssetManager2(0xb400007082e08ff8) locale list changing from [] to [en-US]
+01-27 15:09:33.624  1086  1153 I ndroid.systemui: AssetManager2(0xb400007082e11fb8) locale list changing from [] to [en-US]
+01-27 15:09:33.654 31133 31133 I agecropper.test: AssetManager2(0x7082dbdff8) locale list changing from [] to [en-US]
+01-27 15:09:33.677   476   556 I RanchuHwc: logCompositionFallbackIfChanged: layer 491 CompositionType fallback from 3 to 1
+01-27 15:09:33.793 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: PRE_ON_CREATE
+01-27 15:09:33.795 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+01-27 15:09:33.858 31133 31153 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+01-27 15:09:33.861 31133 31153 I EGL_emulation: Opening libGLESv2_emulation.so
+01-27 15:09:33.883 30865 30882 I cut_interaction: Explicit concurrent mark compact GC freed 684KB AllocSpace bytes, 4(76KB) LOS objects, 50% free, 18MB/37MB, paused 12.179ms,10.379ms total 387.690ms
+01-27 15:09:33.912 31133 31133 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+01-27 15:09:33.917 31133 31153 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+01-27 15:09:33.917 31133 31153 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+01-27 15:09:33.958 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: CREATED
+01-27 15:09:33.965 31133 31133 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=androidx.activity.ComponentActivity@92f330a
+01-27 15:09:33.967 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: STARTED
+01-27 15:09:33.967 31133 31133 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=androidx.activity.ComponentActivity@92f330a
+01-27 15:09:33.993 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: RESUMED
+01-27 15:09:33.994 31133 31133 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=androidx.activity.ComponentActivity@92f330a
+01-27 15:09:34.047 31133 31133 W HWUI    : Unknown dataspace 0
+01-27 15:09:34.059   476   556 I RanchuHwc: logCompositionFallbackIfChanged: layer 493 CompositionType fallback from 2 to 1
+01-27 15:09:34.072   519  1280 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10219 pid=0
+01-27 15:09:34.072   519  1280 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10219 => denied (1306 us)
+01-27 15:09:34.073   519  1280 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10219 pid=0
+01-27 15:09:34.073   519  1280 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10219 => denied (700 us)
+01-27 15:09:34.073   519   550 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10219 pid=31133
+01-27 15:09:34.073   519   550 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10219 => denied (837 us)
+01-27 15:09:34.073   519   550 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10219 pid=31133
+01-27 15:09:34.073   519   550 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10219 => denied (59 us)
+01-27 15:09:34.074   519  1280 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10219 pid=0
+01-27 15:09:34.074   519  1280 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10219 => denied (1442 us)
+01-27 15:09:34.076   476   556 I RanchuHwc: logCompositionFallbackIfChanged: layer 494 CompositionType fallback from 3 to 1
+01-27 15:09:34.174   671  1962 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10219 pid=0
+01-27 15:09:34.174   671  1962 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10219 => denied (231 us)
+01-27 15:09:34.174   671  1962 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10219 pid=0
+01-27 15:09:34.174   671  1962 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10219 => denied (28 us)
+01-27 15:09:34.174   671  1962 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10219 pid=0
+01-27 15:09:34.174   671  1962 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10219 => denied (369 us)
+01-27 15:09:34.187   671   701 I ActivityTaskManager: Displayed com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity for user 0: +1s12ms
+01-27 15:09:34.196 30865 30865 D VRI[DevAppActivity]: visibilityChanged oldVisibility=true newVisibility=false
+01-27 15:09:34.234  1401  1401 I NotificationListener: received notification posted event - com.cricut.demoapp.android_oob_cut_interaction#UserHandle{0},category=-1
+01-27 15:09:34.256  1721  1883 W AiAiEcho: LyftNotificationParser Ridesharing ETA not enabled
+01-27 15:09:34.273  1721  1883 I AiAiEcho: SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+01-27 15:09:34.338 31133 31137 I agecropper.test: Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
+01-27 15:09:34.350 30865 30865 I AutofillManager: onInvisibleForAutofill(): expiringResponse
+01-27 15:09:34.371 30865 30865 W WindowOnBackDispatcher: OnBackInvokedCallback is not enabled for the application.
+01-27 15:09:34.371 30865 30865 W WindowOnBackDispatcher: Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+01-27 15:09:34.501 30865 30865 W cut_interaction: Verification of void androidx.fragment.app.FragmentState.<clinit>() took 100.208ms (79.83 bytecodes/s) (0B arena alloc)
+01-27 15:09:34.547   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.547   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.547   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.577  1086  1234 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@4b96342
+01-27 15:09:34.590   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.591   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.591   577   649 W IPCThreadState: Sending oneway calls to frozen process.
+01-27 15:09:34.640  6407  6469 I FontLog : (REDACTED) Received query %s, URI %s
+01-27 15:09:34.647  6407  6469 I FontLog : (REDACTED) Query [%s] resolved to %s
+01-27 15:09:34.656  6407  6469 I FontLog : (REDACTED) Fetch %s end status %s
+01-27 15:09:34.669  6407  6469 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+01-27 15:09:34.674  1086  1473 D LocalImageResolver: Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+01-27 15:09:34.682  1086  1473 D LocalImageResolver: Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+01-27 15:09:34.694  6407  6469 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+01-27 15:09:34.821 31133 31133 I agecropper.test: hiddenapi: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/compose/ui/platform/AndroidComposeView$Companion; (domain=app) using reflection: allowed
+01-27 15:09:34.942 31163 31163 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+01-27 15:09:34.969   671  2732 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@1d3af2ce does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+01-27 15:09:34.973   519   593 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:34.975   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:34.976 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: PAUSED
+01-27 15:09:34.976 31133 31133 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=androidx.activity.ComponentActivity@92f330a
+01-27 15:09:34.979   671   702 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Dialog$$ExternalSyntheticLambda2@eeb0baf
+01-27 15:09:34.990 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52 in: PRE_ON_CREATE
+01-27 15:09:34.991 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52
+01-27 15:09:34.995   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+01-27 15:09:34.999   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_AdsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.000   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_CronetDynamite_installtime.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+01-27 15:09:35.002   817   824 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_DynamiteLoader_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.004   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_DynamiteModulesA_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.007 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52 in: CREATED
+01-27 15:09:35.007 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52
+01-27 15:09:35.007 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52 in: STARTED
+01-27 15:09:35.007 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52
+01-27 15:09:35.008   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_DynamiteModulesC_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.011   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_GoogleCertificates_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.012   817   824 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_MapsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.013 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52 in: RESUMED
+01-27 15:09:35.014 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52
+01-27 15:09:35.014   817   826 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~nKOiEV9oocR0Phb3UUHbBw==/com.google.android.gms-V6J2CBLljDdas1MUoS60ig==/oat/arm64/split_MeasurementDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+01-27 15:09:35.017   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000e/dl-TfliteDynamiteDynamite.integ_243930802100400.apk has no usable artifacts
+01-27 15:09:35.026   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000f/dl-Appsearch.optional_255034100400.apk has no usable artifacts
+01-27 15:09:35.039   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+01-27 15:09:35.039   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+01-27 15:09:35.041   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000012/dl-PlayCloudSearch.optional_255034100000.apk has no usable artifacts
+01-27 15:09:35.047   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+01-27 15:09:35.050   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000010/dl-MlkitBarcodeUi.optional_255034100400.apk has no usable artifacts
+01-27 15:09:35.055   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000a/dl-MlkitBarcodeUi.optional_250834100400.apk has no usable artifacts
+01-27 15:09:35.083   671   701 I ActivityTaskManager: Displayed com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity for user 0: +107ms
+01-27 15:09:35.086   817   826 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/4346EA85CDA1436041B029D54013FBB1AA13E134/oat/arm64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+01-27 15:09:35.092   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000009/dl-Appsearch.optional_250834100400.apk has no usable artifacts
+01-27 15:09:35.108   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000008/dl-TfliteDynamiteDynamite.integ_243930801100400.apk has no usable artifacts
+01-27 15:09:35.117 31133 31133 D VRI[ComponentActivity]: visibilityChanged oldVisibility=true newVisibility=false
+01-27 15:09:35.123   817   826 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+01-27 15:09:35.142 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: STOPPED
+01-27 15:09:35.143 31133 31133 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=androidx.activity.ComponentActivity@92f330a
+01-27 15:09:35.152 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@92f330a in: DESTROYED
+01-27 15:09:35.152 31133 31133 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+01-27 15:09:35.155 31133 31133 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@125a041
+01-27 15:09:35.163 31133 31133 D ViewRootImpl: Skipping stats log for color mode
+01-27 15:09:35.191 31133 31133 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52 in: PAUSED
+01-27 15:09:35.191 31133 31133 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.vshpyrka.imagecropper.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.vshpyrka.imagecropper.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@4b30b52
+01-27 15:09:35.193   519   519 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:35.219 30865 30865 D ViewRootImpl: Skipping stats log for color mode
+01-27 15:09:35.312   519   550 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+01-27 15:09:35.320 31133 31147 D IdlingRegistry: Unregistering idling resources: [androidx.compose.ui.test.EspressoLink@a96ae7c]
+01-27 15:09:35.323 31133 31147 I TestRunner: finished: imageCropper_rendersAndAcceptsInput(com.vshpyrka.imagecropper.ImageCropperTest)

@@ -1,0 +1,32 @@
+com.vshpyrka.imagecropper.Handle:
+    public static kotlin.enums.EnumEntries getEntries()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1:
+    private static final void invoke$lambda$2(androidx.compose.runtime.MutableState,long)
+com.vshpyrka.imagecropper.BitmapLoader$loadBitmap$2:
+    public int label
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.BitmapLoader$loadBitmapFromAssets$2:
+    public int label
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.Handle:
+    public static final synthetic kotlin.enums.EnumEntries $ENTRIES
+    public static boolean isBottom()
+    public final boolean isLeft()
+    public static boolean isRight()
+    public final boolean isTop()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$1$1:
+    public int label
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$centerCropRectOnScreen$1$1:
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$centerCropRectOnScreen$1$2:
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$centerCropRectOnScreen$1$3:
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$centerCropRectOnScreen$1:
+    public int label
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1$fitImageToScreen$1:
+    public static java.lang.Object invoke()
+com.vshpyrka.imagecropper.ImageCropperKt$ImageCropper$1:
+    public static final long access$invoke$lambda$1(androidx.compose.runtime.MutableState)
