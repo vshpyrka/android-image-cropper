@@ -27,7 +27,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -45,17 +47,14 @@ import kotlin.math.roundToInt
 /**
  * A state object that can be hoisted to control and observe the image cropping state.
  *
- * @param bitmap The [Bitmap] that will be used for cropping calculations.
+ * @param imageBitmap The [ImageBitmap] that will be used for cropping calculations.
  */
 @Stable
-class ImageCropperState(val bitmap: Bitmap) {
-
-    /** The original image as an [androidx.compose.ui.graphics.ImageBitmap] for rendering. */
-    internal val imageBitmap = bitmap.asImageBitmap()
+class ImageCropperState(val imageBitmap: ImageBitmap) {
 
     /** The size of the original image being cropped. */
     var imageSize by mutableStateOf(
-        Size(bitmap.width.toFloat(), bitmap.height.toFloat())
+        Size(imageBitmap.width.toFloat(), imageBitmap.height.toFloat())
     )
         internal set
 
@@ -65,8 +64,8 @@ class ImageCropperState(val bitmap: Bitmap) {
 
     init {
         // Initialize crop rect to 80% of image size, centered
-        val w = bitmap.width.toFloat()
-        val h = bitmap.height.toFloat()
+        val w = imageBitmap.width.toFloat()
+        val h = imageBitmap.height.toFloat()
         val rectW = w * 0.8f
         val rectH = h * 0.8f
         cropRect = Rect(
@@ -132,6 +131,22 @@ class ImageCropperState(val bitmap: Bitmap) {
         val height = r.height.toInt().coerceIn(1, bitmap.height - top)
 
         return Bitmap.createBitmap(bitmap, left, top, width, height)
+    }
+
+    /**
+     * Crops the internal image bitmap using the current [cropRect].
+     *
+     * @return The cropped [ImageBitmap].
+     */
+    fun crop(): ImageBitmap {
+        val bitmap = imageBitmap.asAndroidBitmap()
+        val r = cropRect
+        val left = r.left.toInt().coerceIn(0, bitmap.width - 1)
+        val top = r.top.toInt().coerceIn(0, bitmap.height - 1)
+        val width = r.width.toInt().coerceIn(1, bitmap.width - left)
+        val height = r.height.toInt().coerceIn(1, bitmap.height - top)
+
+        return Bitmap.createBitmap(bitmap, left, top, width, height).asImageBitmap()
     }
 
     /**
@@ -279,14 +294,14 @@ class ImageCropperState(val bitmap: Bitmap) {
 }
 
 /**
- * Creates and remembers an [ImageCropperState] for the given [bitmap].
+ * Creates and remembers an [ImageCropperState] for the given [imageBitmap].
  *
- * @param bitmap The [Bitmap] to initialize the state with.
+ * @param imageBitmap The [ImageBitmap] to initialize the state with.
  * @return A remembered [ImageCropperState].
  */
 @Composable
-fun rememberImageCropperState(bitmap: Bitmap): ImageCropperState {
-    return remember(bitmap) { ImageCropperState(bitmap) }
+fun rememberImageCropperState(imageBitmap: ImageBitmap): ImageCropperState {
+    return remember(imageBitmap) { ImageCropperState(imageBitmap) }
 }
 
 /**
@@ -295,15 +310,15 @@ fun rememberImageCropperState(bitmap: Bitmap): ImageCropperState {
  * This composable provides an interactive UI for cropping a bitmap. It displays the image
  * and updates the view to keep the crop rectangle visible and centered when possible.
  *
- * @param bitmap The [Bitmap] to be cropped.
+ * @param imageBitmap The [ImageBitmap] to be cropped.
  * @param modifier The [Modifier] to be applied to the layout.
  * @param state The [ImageCropperState] to control and observe the cropping process.
  */
 @Composable
 fun ImageCropper(
-    bitmap: Bitmap,
+    imageBitmap: ImageBitmap,
     modifier: Modifier = Modifier,
-    state: ImageCropperState = rememberImageCropperState(bitmap),
+    state: ImageCropperState = rememberImageCropperState(imageBitmap),
 ) {
     val density = LocalDensity.current
     val minTouchSize = with(density) { 48.dp.toPx() }
@@ -320,7 +335,7 @@ fun ImageCropper(
         if (state.parentSize != Size.Zero) {
             val scope = rememberCoroutineScope()
 
-            LaunchedEffect(bitmap, state.parentSize) {
+            LaunchedEffect(imageBitmap, state.parentSize) {
                 state.initializeViewportIfNeeded()
             }
 

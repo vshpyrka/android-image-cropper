@@ -32,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -111,7 +113,7 @@ fun ImageCropperApp() {
                 }
                 state.imageBitmap != null -> {
                     CroppingScreen(
-                        bitmap = state.imageBitmap!!,
+                        imageBitmap = state.imageBitmap!!.asImageBitmap(),
                         onCrop = { cropped ->
                             state.croppedBitmap = cropped
                         },
@@ -191,14 +193,14 @@ private fun SelectionScreen(
 
 @Composable
 private fun CroppingScreen(
-    bitmap: Bitmap,
+    imageBitmap: ImageBitmap,
     onCrop: (Bitmap) -> Unit,
     onCancel: () -> Unit
 ) {
-    val cropperState = rememberImageCropperState(bitmap)
+    val cropperState = rememberImageCropperState(imageBitmap)
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
-            ImageCropper(bitmap = bitmap, state = cropperState)
+            ImageCropper(imageBitmap = imageBitmap, state = cropperState)
         }
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -208,7 +210,7 @@ private fun CroppingScreen(
                 Text("Cancel")
             }
             Button(onClick = {
-                onCrop(cropperState.crop(bitmap))
+                onCrop(cropperState.crop().asAndroidBitmap())
             }) {
                 Icon(Icons.Default.Crop, null)
                 Text("Crop", modifier = Modifier.padding(start = 4.dp))
