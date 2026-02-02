@@ -106,4 +106,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tests-report-${{ matrix.api-level }}
-          path: app/build/reports
+          path: image-cropper/build/reports
