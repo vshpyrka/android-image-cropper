@@ -20,16 +20,29 @@ A powerful, customizable, and smooth image cropping library for Android, built e
 *   **Grid Support**: Includes a rule-of-thirds grid for precise composition.
 
 ## 📦 Installation
-TBD
 
-<!--- Add the library to your module's `build.gradle.kts`:
+### 1. Add Repository
+
+In your `settings.gradle.kts` (or root `build.gradle.kts`), add the following:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+```
+
+### 2. Add Dependency
+
+Add the library to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.yourusername:ImageCropper:1.0.0") // Replace with actual version/jitpack link
+    implementation("com.github.vshpyrka:android-image-cropper:1.0.0")
 }
 ```
--->
 
 ## 🚀 Usage
 
