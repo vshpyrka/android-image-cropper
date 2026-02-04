@@ -633,85 +633,79 @@ public fun ImageCropper(
                 state.initializeViewportIfNeeded()
             }
 
-            val scale = state.scaleAnim.value
-            val offset = Offset(state.offsetXAnim.value, state.offsetYAnim.value)
+            if (state.initialized) {
+                val scale = state.scaleAnim.value
+                val offset = Offset(state.offsetXAnim.value, state.offsetYAnim.value)
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds()
-                    .pointerInput(Unit) {
-                        awaitEachGesture {
-                            val down = awaitFirstDown(requireUnconsumed = false)
-                            state.onInteractionStart(down.position, minTouchSizePx)
-                            waitForUpOrCancellation()
-                            state.onInteractionEnd()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds()
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                val down = awaitFirstDown(requireUnconsumed = false)
+                                state.onInteractionStart(down.position, minTouchSizePx)
+                                waitForUpOrCancellation()
+                                state.onInteractionEnd()
+                            }
                         }
-                    }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { pos ->
-                                state.onDragStart(pos, minTouchSizePx)
-                            },
-                            onDragEnd = {
-                                scope.launch {
-                                    state.onDragFinished(centerMarginPx)
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { pos ->
+                                    state.onDragStart(pos, minTouchSizePx)
+                                },
+                                onDragEnd = {
+                                    scope.launch {
+                                        state.onDragFinished(centerMarginPx)
+                                    }
+                                },
+                                onDragCancel = {
+                                    scope.launch {
+                                        state.onDragFinished(centerMarginPx)
+                                    }
+                                },
+                                onDrag = { change, _ ->
+                                    change.consume()
+                                    scope.launch {
+                                        state.onDrag(
+                                            changePosition = change.position,
+                                            baseMinCropPx = baseMinCropSizePx,
+                                        )
+                                    }
                                 }
+                            )
+                        }
+                ) {
+                    val screenCropRect = with(state) { state.cropRect.toScreen(scale, offset) }
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        withTransform(
+                            transformBlock = {
+                                translate(offset.x, offset.y)
+                                scale(scale, scale, pivot = Offset.Zero)
                             },
-                            onDragCancel = {
-                                scope.launch {
-                                    state.onDragFinished(centerMarginPx)
-                                }
-                            },
-                            onDrag = { change, _ ->
-                                change.consume()
-                                scope.launch {
-                                    state.onDrag(
-                                        changePosition = change.position,
-                                        baseMinCropPx = baseMinCropSizePx,
-                                    )
-                                }
+                            drawBlock = {
+                                drawImage(state.imageBitmap)
                             }
                         )
-                    }
-            ) {
-                val screenCropRect = with(state) { state.cropRect.toScreen(scale, offset) }
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    withTransform(
-                        transformBlock = {
-                            translate(offset.x, offset.y)
-                            scale(scale, scale, pivot = Offset.Zero)
-                        },
-                        drawBlock = {
-                            drawImage(state.imageBitmap)
+
+                        // Overlay
+                        drawOverlay(screenCropRect, colors.overlayColor)
+
+                        // Border
+                        drawBorder(screenCropRect, colors.borderColor)
+
+                        // Grid
+                        if (state.showGrid) {
+                            drawGrid(screenCropRect, colors.gridColor)
                         }
-                    )
 
-                    // Overlay
-                    drawOverlay(screenCropRect, colors.overlayColor)
-
-                    // Border
-                    drawBorder(screenCropRect, colors.borderColor)
-
-                    // Grid
-                    if (state.showGrid) {
-                        drawGrid(screenCropRect, colors.gridColor)
+                        // Handles
+                        drawHandles(screenCropRect, colors.handleColor)
                     }
 
-                    // Handles
-                    drawHandles(screenCropRect, colors.handleColor)
+                    HandleBoxes(screenCropRect)
+                    CroppingRect(screenCropRect)
                 }
-
-                HandleBox(Handle.TopLeft, screenCropRect.topLeft)
-                HandleBox(Handle.TopRight, screenCropRect.topRight)
-                HandleBox(Handle.BottomLeft, screenCropRect.bottomLeft)
-                HandleBox(Handle.BottomRight, screenCropRect.bottomRight)
-                HandleBox(Handle.Top, screenCropRect.topCenter)
-                HandleBox(Handle.Bottom, screenCropRect.bottomCenter)
-                HandleBox(Handle.Left, screenCropRect.centerLeft)
-                HandleBox(Handle.Right, screenCropRect.centerRight)
-
-                CroppingRect(screenCropRect)
             }
         }
     }
@@ -724,10 +718,13 @@ public fun ImageCropper(
  * @param screenCropRect The current crop rectangle in screen coordinates.
  */
 @Composable
-private fun CroppingRect(screenCropRect: Rect) {
+private fun CroppingRect(
+    screenCropRect: Rect,
+    modifier: Modifier = Modifier,
+) {
     val density = LocalDensity.current
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(
                 width = with(density) { screenCropRect.width.toDp() },
                 height = with(density) { screenCropRect.height.toDp() }
@@ -743,21 +740,46 @@ private fun CroppingRect(screenCropRect: Rect) {
 }
 
 /**
+ * A composable that groups all individual [HandleBox] instances for the crop rectangle.
+ *
+ * @param rect The current crop rectangle in screen coordinates.
+ * @param modifier The [Modifier] to be applied to the layout.
+ */
+@Composable
+private fun HandleBoxes(
+    rect: Rect,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        HandleBox(Handle.TopLeft, rect.topLeft)
+        HandleBox(Handle.TopRight, rect.topRight)
+        HandleBox(Handle.BottomLeft, rect.bottomLeft)
+        HandleBox(Handle.BottomRight, rect.bottomRight)
+        HandleBox(Handle.Top, rect.topCenter)
+        HandleBox(Handle.Bottom, rect.bottomCenter)
+        HandleBox(Handle.Left, rect.centerLeft)
+        HandleBox(Handle.Right, rect.centerRight)
+    }
+}
+
+/**
  * An invisible box positioned over a crop handle to capture touch events
  * and provide a target for automated tests.
  *
  * @param handle The [Handle] this box represents.
  * @param position The position of the handle in screen coordinates.
+ * @param modifier The [Modifier] to be applied to the layout.
  * @param drawDebug Whether to draw a yellow background for the handle box for debugging.
  */
 @Composable
 private fun HandleBox(
     handle: Handle,
     position: Offset,
+    modifier: Modifier = Modifier,
     drawDebug: Boolean = false,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(ImageCropperTokens.HandleInteractionSize)
             .offset {
                 IntOffset(
