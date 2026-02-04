@@ -21,7 +21,7 @@ afterEvaluate {
                 url = uri("https://maven.pkg.github.com/vshpyrka/android-image-cropper")
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    password = System.getenv("GITHUB_TOKEN") ?: System.getenv("GITHUB_PUBLISH_TOKEN")
                 }
             }
         }
