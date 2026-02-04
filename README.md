@@ -94,6 +94,20 @@ ImageCropper(
 )
 ```
 
+## 🧪 Testing
+
+The project includes comprehensive instrumentation tests to ensure reliability and correctness of the cropping logic and UI interactions.
+
+These tests are automatically executed on every push and on a daily schedule via **GitHub Actions**. The CI pipeline utilizes the `reactivecircus/android-emulator-runner` to run tests on a managed Android Emulator.
+
+**Test Environment:**
+*   **Platform:** Linux (ubuntu-latest)
+*   **Emulator:** ReactiveCircus Android Emulator Runner
+*   **API Level:** 36
+*   **Target:** x86_64
+
+You can view the latest test runs and download test reports from the [Actions tab](https://github.com/vshpyrka/android-image-cropper/actions/workflows/build.yml).
+
 ## 📄 License
 
 ```text
