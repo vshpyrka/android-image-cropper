@@ -21,7 +21,6 @@ jobs:
       packages: write
     env:
       GITHUB_PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-      GITHUB_ACTOR: ${{ secrets.ACTOR }}
       GRADLE_OPTS: -Dorg.gradle.daemon=false
     steps:
       - name: Checkout
@@ -58,4 +57,4 @@ jobs:
         run: ./gradlew :image-cropper:publishReleasePublicationToGitHubPackagesRepository -Pversion=${{ steps.tag_version.outputs.new_version }}
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_PUBLISH_TOKEN }}
-          GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
+          GITHUB_ACTOR: ${{ github.actor }}
