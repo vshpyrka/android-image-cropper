@@ -4,9 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       increment:
-        description: 'Version increment (patch, minor, major)'
+        description: 'Version increment'
         required: true
+        type: choice
         default: 'patch'
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   publish:
@@ -52,5 +57,5 @@ jobs:
       - name: Publish to GitHub Packages
         run: ./gradlew :image-cropper:publishReleasePublicationToGitHubPackagesRepository -Pversion=${{ steps.tag_version.outputs.new_version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ env.GITHUB_PUBLISH_TOKEN }}
+          GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
