@@ -9,7 +9,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.vshpyrka.imagecropper"
+    namespace = "io.github.vshpyrka.imagecropper"
     compileSdk = 36
 
     defaultConfig {
