@@ -1,54 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    `maven-publish`
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
-                groupId = "com.vshpyrka"
-                artifactId = "image-cropper"
-                version = project.findProperty("version")?.toString() ?: project.version.toString()
-
-                from(components["release"])
-
-                pom {
-                    name.set("android-image-cropper")
-                    description.set("Android Image Cropper")
-                    url.set("https://github.com/vshpyrka/android-image-cropper")
-                    licenses {
-                        // licensing info
-                        license {
-                            // license name
-                            name.set("The Apache License, Version 2.0")
-                            // license url
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        }
-                    }
-                    developers {
-                        // developer meta data
-                        developer {
-                            id.set("vshpyrka")
-                            name.set("Victor Shpyrka")
-                            email.set("victor.shpyrka@gmail.com")
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/vshpyrka/android-image-cropper")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_PUBLISH_TOKEN")
-                }
-            }
-        }
-    }
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
 kotlin {
