@@ -53,8 +53,16 @@ jobs:
           prerelease: false
           generate_release_notes: true
 
-      - name: Publish to GitHub Packages
-        run: ./gradlew :image-cropper:publishReleasePublicationToGitHubPackagesRepository -Pversion=${{ steps.tag_version.outputs.new_version }}
+      - name: Write version to gradle.properties
+        run: echo "VERSION_NAME=${{ steps.tag_version.outputs.new_version }}" >> gradle.properties
+
+      - name: Publish to MavenCentral
+        run: ./gradlew publishToMavenCentral
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_PUBLISH_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
