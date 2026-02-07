@@ -1,1 +1,4 @@
-# Add project specific ProGuard rules here.
+-keep public class com.vshpyrka.imagecropper.** {
+    public protected <fields>;
+    public protected <methods>;
+}
