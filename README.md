@@ -40,7 +40,7 @@ Add the library to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.vshpyrka:android-image-cropper:1.0.0")
+    implementation("io.github.vshpyrka:android-image-cropper:<version>")
 }
 ```
 
