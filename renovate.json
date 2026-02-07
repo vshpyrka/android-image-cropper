@@ -1,0 +1,43 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "prConcurrentLimit": 10,
+    "prHourlyLimit": 0,
+    "dependencyDashboard": true,
+    "rangeStrategy": "bump",
+    "gradle": {
+        "enabled": true,
+        "fileMatch": [
+            "build.gradle",
+            "build.gradle.kts",
+            "gradle/libs.versions.toml"
+        ]
+    },
+    "packageRules": [
+        {
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": true
+        },
+        {
+            "matchPackageNames": [
+                "androidx.compose:compose-bom"
+            ],
+            "groupName": "Jetpack Compose"
+        },
+        {
+            "matchPackageNames": [
+                "org.jetbrains.kotlin:kotlin-gradle-plugin"
+            ],
+            "groupName": "Kotlin"
+        }
+    ],
+    "dependencies": {
+        "enabled": true
+    }
+}
