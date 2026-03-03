@@ -8,7 +8,7 @@
         "main"
     ],
     "repositories": [
-        "vshpyrka/android-version-catalog"
+        "vshpyrka/android-image-cropper"
     ],
     "platform": "github",
     "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
