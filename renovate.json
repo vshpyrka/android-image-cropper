@@ -1,28 +1,39 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "config:recommended"
+        "config:recommended",
+        ":dependencyDashboard"
     ],
-    "prConcurrentLimit": 10,
-    "prHourlyLimit": 0,
-    "dependencyDashboard": true,
-    "rangeStrategy": "bump",
-    "gradle": {
-        "enabled": true,
-        "fileMatch": [
-            "build.gradle",
-            "build.gradle.kts",
-            "gradle/libs.versions.toml"
-        ]
-    },
+    "baseBranches": [
+        "main"
+    ],
+    "repositories": [
+        "vshpyrka/android-version-catalog"
+    ],
+    "platform": "github",
+    "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+    "branchPrefix": "renovate/",
+    "semanticCommits": "enabled",
+    "prConcurrentLimit": 0,
+    "prCommitsPerRunLimit": 0,
+    "branchConcurrentLimit": 0,
+    "ignoreTests": true,
     "packageRules": [
         {
-            "matchUpdateTypes": [
-                "minor",
-                "patch"
-            ],
+            "description": "Automatically merge minor and patch-level updates",
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
             "matchCurrentVersion": "!/^0/",
-            "automerge": true
+            "automerge": true,
+            "automergeType": "pr"
+        },
+        {
+            "matchFileNames": [
+                "gradle/libs.versions.toml"
+            ],
+            "groupName": "Libs",
+            "addLabels": [
+                "libs"
+            ]
         },
         {
             "matchPackageNames": [
@@ -36,8 +47,5 @@
             ],
             "groupName": "Kotlin"
         }
-    ],
-    "dependencies": {
-        "enabled": true
-    }
+    ]
 }
