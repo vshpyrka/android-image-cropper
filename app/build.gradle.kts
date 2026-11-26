@@ -14,7 +14,11 @@ kotlin {
 
 android {
     namespace = "com.vshpyrka.imagecropper.app"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     defaultConfig {
         applicationId = "com.vshpyrka.imagecropper.app"
