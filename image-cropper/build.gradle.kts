@@ -15,7 +15,11 @@ kotlin {
 
 android {
     namespace = "io.github.vshpyrka.imagecropper"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     defaultConfig {
         minSdk = 24
